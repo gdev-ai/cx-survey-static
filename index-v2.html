@@ -804,10 +804,21 @@
       transform: none;
     }
 
+    /* The mark slot is always there (faint "+", then "✓" when selected) and has a fixed width,
+       so selecting a chip never changes its size or makes the row reflow. */
+    .chips .box::before {
+      content: "+";
+      display: inline-block;
+      width: 12px;
+      margin-right: 6px;
+      text-align: center;
+      font-size: 13px;
+      opacity: .45;
+    }
+
     .chips input:checked+.box::before {
       content: "✓";
-      margin-right: 6px;
-      font-size: 13px;
+      opacity: 1;
     }
 
     textarea,
