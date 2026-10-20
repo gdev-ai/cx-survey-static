@@ -1663,9 +1663,17 @@
       demoWhenNoParams: true       // No "u" params in the link -> show sample units (set false for production).
     };
 
-    /* ===================== QUESTION BANK (from the consolidated design) ===================== */
+    /* ===================== QUESTION BANK (from the consolidated design) =====================
+       Updated to Karim's per-community sheets (Playa / Seashell, 20 Oct 2026): E1 and E2 list
+       different items for each community (itemsBy); every other question is shared. */
     const SAT = { en: ["Very dissatisfied", "Completely satisfied"], ar: ["غير راضٍ على الإطلاق", "راضٍ تمامًا"] };
     const NA_LABEL = { en: "Not applicable / didn't use", ar: "لا ينطبق / لم أستخدمها" };
+    const BEACH_SHARED = [
+      { id: "E1.1", en: "Cleanliness", ar: "النظافة" },
+      { id: "E1.2", en: "Furniture and facilities", ar: "الأثاث والمرافق" },
+      { id: "E1.3", en: "Lifeguards", ar: "المنقذون" },
+      { id: "E1.4", en: "Beach staff service", ar: "خدمة فريق الشاطئ" }
+    ];
 
     const Q = {
       /* ---- Part A: Core ---- */
@@ -1712,8 +1720,8 @@
           { id: "B1.1", en: "Accuracy of your account statements and payment schedule", ar: "دقة كشوف الحساب وجدول السداد" },
           { id: "B1.2", en: "Ease of making payments", ar: "سهولة سداد الأقساط" },
           {
-            id: "B1.3", en: "Handling of your contract and document requests (resale or transfer)",
-            ar: "التعامل مع طلباتك الخاصة بالعقد والمستندات (إعادة البيع أو التنازل)"
+            id: "B1.3", en: "Handling of your contract and document requests (e.g., resale or transfer)",
+            ar: "التعامل مع طلباتك الخاصة بالعقد والمستندات (مثل إعادة البيع أو التنازل)"
           }
         ]
       },
@@ -1792,23 +1800,35 @@
       /* ---- Part E: Community ([Community] replaced at render time) ---- */
       E1: {
         type: "matrix", na: true, en: "How satisfied are you with the beach?", ar: "ما مدى رضاك عن كل مما يلي في الشاطئ؟",
-        items: [
-          { id: "E1.1", en: "Cleanliness", ar: "النظافة" },
-          { id: "E1.2", en: "Furniture and facilities", ar: "الأثاث والمرافق" },
-          { id: "E1.3", en: "Lifeguards", ar: "المنقذون" },
-          { id: "E1.4", en: "Beach staff service", ar: "خدمة فريق الشاطئ" },
-          { id: "E1.5", en: "Commercial outlets", ar: "الاماكن التجارية" }
-        ]
+        itemsBy: {
+          Playa: [
+            ...BEACH_SHARED,
+            { id: "E1.5", en: "Commercial outlets", ar: "الأماكن التجارية" }
+          ],
+          Seashell: [
+            ...BEACH_SHARED,
+            { id: "E1.5", en: "Beachfront commercial area", ar: "المنطقة التجارية المواجهة للشاطئ" },
+            { id: "E1.6", en: "Internal commercial area, including the sports court and kids' area", ar: "المنطقة التجارية الداخلية، بما فيها الملعب الرياضي ومنطقة الأطفال" },
+            { id: "E1.7", en: "Seashell Walk", ar: "سي شل ووك" }
+          ]
+        }
       },
       E2: {
         type: "matrix", na: true, en: "How satisfied are you with the swimmable zones (pools or lagoons)?",
         ar: "ما مدى رضاك عن كل مما يلي في حمامات السباحة واللاجون؟",
-        items: [
-          { id: "E2.1", en: "Sand cleanliness and quality", ar: "نظافة حول البحيرات وجودتها" },
-          { id: "E2.2", en: "Lifeguards", ar: "المنقذون" },
-          { id: "E2.3", en: "Swimmable lagoon or pools cleanliness and water quality", ar: "نظافة اللاجون و الحمامات المخصص للسباحة وجودة مياهه" },
-          { id: "E2.4", en: "Non-swimmable lagoon or fountains cleanliness", ar: "نظافة اللاجون او النوافير الغير مخصص للسباحة" }
-        ]
+        itemsBy: {
+          Playa: [
+            { id: "E2.1", en: "Sand cleanliness and quality", ar: "نظافة حول البحيرات وجودتها" },
+            { id: "E2.2", en: "Lagoon cleanliness and water quality", ar: "نظافة اللاجون وجودة مياهه" },
+            { id: "E2.3", en: "Fountain cleanliness", ar: "نظافة النوافير" }
+          ],
+          Seashell: [
+            { id: "E2.1", en: "Sand cleanliness and quality", ar: "نظافة حول البحيرات وجودتها" },
+            { id: "E2.2", en: "Lifeguards", ar: "المنقذون" },
+            { id: "E2.3", en: "Swimmable lagoon or pools cleanliness and water quality", ar: "نظافة اللاجون و الحمامات المخصص للسباحة وجودة مياهه" },
+            { id: "E2.4", en: "Non-swimmable lagoon cleanliness", ar: "نظافة اللاجون غير المخصص للسباحة" }
+          ]
+        }
       },
       E3: {
         type: "matrix", na: true, en: "How satisfied are you with security, traffic and parking?",
@@ -1836,7 +1856,7 @@
         items: [
           { id: "E5.1", en: "Response time", ar: "سرعة الاستجابة" },
           { id: "E5.2", en: "Quality of the fix or answer", ar: "جودة الحل أو الرد" },
-          { id: "E5.3", en: "Follow-up until it was closed", ar: "المتابعة حتى الإغلاق" }
+          { id: "E5.3", en: "Follow-up on the request or complaint", ar: "متابعة الطلب أو الشكوى المقدمة" }
         ]
       },
       E6: {
@@ -1852,19 +1872,14 @@
         ar: "بشكل عام، ما مدى رضاك عن تجربتك في [Community] هذا الصيف؟"
       },
       E9: {
-        type: "single", en: "Which ONE area should we improve first for Summer 2027?",
-        ar: "ما المجال الوحيد الذي يجب أن نبدأ بتحسينه في صيف 2027؟",
+        type: "multi", en: "Which areas should we improve for Summer 2027?",
+        ar: "ما المجالات التي تفضل أن نبدأ بتحسينها في صيف 2027؟", hint: "Select all that apply.",
         options: ["Beach", "Pools & lagoons", "Security & traffic", "Facilities", "Operations team", "App", "Other"],
         follow: { when: "Other", key: "E9_other", label: "Please specify.", required: false }
-      },
-      E10: {
-        type: "multi", optional: true, en: "Which paid in-unit services would you use if we offered them?",
-        ar: "ما الخدمات المدفوعة داخل الوحدة التي قد تستخدمها إذا قدمناها؟", hint: "Select all that apply.",
-        options: ["Plumbing", "Electrical", "Carpentry", "Aluminium", "Housekeeping", "Air conditioning", "Painting",
-          "Civil works", "Private pool", "Private garden", "Pest control", "Handyman", "Other"],
-        follow: { when: "Other", key: "E10_other", label: "Please specify.", required: false }
       }
     };
+    /* Matrix rows for a step: per-community lists where the sheets differ, otherwise the shared list. */
+    const itemsOf = (q, c) => q.itemsBy ? q.itemsBy[c] || [] : q.items;
 
     /* ===================== ARABIC UI TEXT =====================
        Answer options are shown in both languages; the submitted value stays the English option. */
@@ -1877,11 +1892,7 @@
       "1–2 years": "من سنة إلى سنتين", "More than 2 years": "أكثر من سنتين",
       "None": "لا يوجد", "1–5": "1–5", "6–15": "6–15", "More than 15": "أكثر من 15",
       "Beach": "الشاطئ", "Pools & lagoons": "حمامات السباحة واللاجون", "Security & traffic": "الأمن والمرور",
-      "Facilities": "المرافق", "Operations team": "فريق التشغيل", "Other": "أخرى",
-      "Plumbing": "سباكة", "Electrical": "كهرباء", "Carpentry": "نجارة", "Aluminium": "ألوميتال",
-      "Housekeeping": "تنظيف منزلي", "Air conditioning": "تكييف", "Painting": "دهانات", "Civil works": "أعمال مدنية",
-      "Private pool": "حمام سباحة خاص", "Private garden": "حديقة خاصة", "Pest control": "مكافحة الحشرات",
-      "Handyman": "أعمال صيانة عامة"
+      "Facilities": "المرافق", "Operations team": "فريق التشغيل", "Other": "أخرى"
     };
     const UI_AR = {
       "Select all that apply.": "اختر كل ما ينطبق.",
@@ -1978,7 +1989,7 @@
         const cAr = COMMUNITY_AR[c] || c;
         s.push({ ...base, part: "Part E · Your community", title: `Life in ${c}`, titleAr: `الحياة في ${cAr}`, sub: "1 of 3", subAr: "1 من 3", qs: ["E1", "E2", "E3", "E4"], handoff: ci === 0 });
         s.push({ ...base, part: "Part E · Your community", title: `Service in ${c}`, titleAr: `الخدمة في ${cAr}`, sub: "2 of 3", subAr: "2 من 3", qs: ["E5", "E6", "E7"] });
-        s.push({ ...base, part: "Part E · Your community", title: `Your ${c} summer`, titleAr: `صيفك في ${cAr}`, sub: "3 of 3", subAr: "3 من 3", qs: ["E8", "E9", "E10"] });
+        s.push({ ...base, part: "Part E · Your community", title: `Your ${c} summer`, titleAr: `صيفك في ${cAr}`, sub: "3 of 3", subAr: "3 من 3", qs: ["E8", "E9"] });
       });
 
       s.push({ kind: "q", theme: "gd", scope: "customer", part: "Closing", title: "Before you go", titleAr: "قبل أن تغادر", qs: ["A7", "A8"] });
@@ -2037,7 +2048,7 @@
 
     function matrixBody(q, a, c) {
       let body = `<div class="legend-line"><span>1★ = ${esc(SAT.en[0])} · 5★ = ${esc(SAT.en[1])}</span>${satLegendAr()}</div>`;
-      for (const it of q.items) {
+      for (const it of itemsOf(q, c)) {
         body += `<div class="m-row" data-item="${esc(it.id)}" role="radiogroup" aria-label="${esc(sub(it.en, c))}">
         <div class="m-label"><span><span class="q-num">${esc(it.id)}</span>${esc(sub(it.en, c))}</span><span class="ar" lang="ar">${esc(sub(it.ar, c))}</span></div>
         <div class="m-controls">${scaleHtml(it.id, 1, 5, a[it.id])}
@@ -2104,7 +2115,7 @@
       for (const id of step.qs) {
         const q = Q[id];
         if (q.type === "matrix") {
-          for (const it of q.items) {
+          for (const it of itemsOf(q, step.community)) {
             const el = form.querySelector(`input[name="${CSS.escape(it.id)}"]:checked`);
             if (el) a[it.id] = el.value === "N/A" ? "N/A" : Number(el.value);
           }
@@ -2135,7 +2146,7 @@
         if (q.showIf && !q.showIf(a)) { card.classList.remove("has-error"); continue; }
         let ok = true;
         if (q.type === "matrix") {
-          for (const it of q.items) {
+          for (const it of itemsOf(q, step.community)) {
             const row = card.querySelector(`[data-item="${CSS.escape(it.id)}"]`);
             const good = a[it.id] !== undefined;
             row.classList.toggle("has-error", !good);
@@ -2362,7 +2373,7 @@
     function matrixBody(q, a, c) {
       let h = `<div class="mx">
     <div class="mx-legend-m">1 = ${esc(SAT.en[0])} · 5 = ${esc(SAT.en[1])}${satLegendAr()}</div>`;
-      for (const it of q.items) {
+      for (const it of itemsOf(q, c)) {
         h += `<div class="m-row" data-item="${esc(it.id)}" role="radiogroup" aria-label="${esc(sub(it.en, c))}">
       <div class="m-label"><span class="q-num">${esc(it.id)}</span>${esc(sub(it.en, c))}<span class="ar" lang="ar">${esc(subAr(it.ar, c))}</span></div>
       <div class="m-controls">${scaleHtml(it.id, 1, 5, a[it.id])}
@@ -2384,7 +2395,7 @@
         const q = Q[id];
         if (q.optional || (q.showIf && !q.showIf(a))) continue;
         if (q.type === "matrix") {
-          for (const it of q.items) { total++; if (a[it.id] !== undefined) done++; }
+          for (const it of itemsOf(q, s.community)) { total++; if (a[it.id] !== undefined) done++; }
         } else {
           total++;
           const v = a[id];
