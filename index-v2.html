@@ -1576,6 +1576,89 @@
       }
 
     }
+
+    /* Section checkpoint: every section with its state (saved / up next / later) */
+    .sec-list {
+      list-style: none;
+      margin: 24px 0 0;
+      padding: 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .sec {
+      display: grid;
+      grid-template-columns: 18px 1fr auto;
+      gap: 4px 14px;
+      align-items: start;
+      padding: 14px 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .sec b {
+      display: block;
+      font-weight: 500;
+      font-size: 15px;
+    }
+
+    .sec small {
+      display: block;
+      margin-top: 3px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .sec-ar {
+      direction: rtl;
+      text-align: right;
+      font-family: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+    }
+
+    .sec-dot {
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      border-radius: 50%;
+      border: 1.5px solid var(--line-strong);
+      box-sizing: border-box;
+    }
+
+    .sec.is-done .sec-dot {
+      border-color: var(--accent);
+      background: var(--accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 8.2l2.3 2.3 4.7-4.9' fill='none' stroke='%23fff' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 100% no-repeat;
+    }
+
+    .sec.is-next {
+      background: var(--accent-tint);
+    }
+
+    .sec.is-next .sec-dot {
+      border-color: var(--accent);
+      background: radial-gradient(circle, var(--accent) 0 4px, transparent 4.5px);
+    }
+
+    .sec.is-next small {
+      color: var(--ink);
+    }
+
+    .sec.is-todo b {
+      font-weight: 400;
+      color: var(--muted);
+    }
+
+    .send-err .ar {
+      margin-top: 4px;
+    }
+
+    @media (max-width: 640px) {
+      .sec {
+        grid-template-columns: 18px 1fr;
+        padding: 12px 8px;
+      }
+
+      .sec-ar {
+        grid-column: 2;
+      }
+    }
   </style>
 </head>
 
@@ -1658,6 +1741,9 @@
        Example:
          ?cid=0015g00000AbCdE&name=Ahmed&u=Playa%20-%20Villa%20B12-03|handed|Playa
        ===================================================================== */
+    /* Answers are sent at the end of every section (status "partial") and once more when the
+       customer finishes (status "complete"), always with the same ref, so the endpoint should
+       store the latest payload per ref. A customer may finish after any section (endedEarly). */
     const CONFIG = {
       submitUrl: "",               // POST endpoint for the JSON payload. Empty = simulated success.
       demoWhenNoParams: true       // No "u" params in the link -> show sample units (set false for production).
@@ -1967,13 +2053,17 @@
         title: "How you hear from us", titleAr: "كيف نتواصل معك", qs: ["B2"]
       });
 
+      /* Units awaiting handover first (Part C), then handed-over units (Part D), so each Part is one section. */
       units.forEach((u, i) => {
         if (u.stage === "pre") {
           s.push({
             kind: "q", theme: "gd", scope: "unit", unit: i, part: "Part C · Before handover",
             title: "Construction and delivery", titleAr: "الإنشاءات والتسليم", qs: ["C1", "C2", "C3"]
           });
-        } else {
+        }
+      });
+      units.forEach((u, i) => {
+        if (u.stage === "handed") {
           s.push({
             kind: "q", theme: "gd", scope: "unit", unit: i, part: "Part D · Your handover",
             title: "Looking back at your handover", titleAr: "نظرة على استلام وحدتك", qs: ["D0", "D1", "D2", "D3", "D4", "D5", "D6", "D7", "D8", "D9"],
@@ -1983,18 +2073,74 @@
       });
 
       const comms = [...new Set(units.filter(u => u.stage === "handed").map(u => u.community))];
+      /* Part E is asked once per community, however many handed-over units the customer owns there. */
       comms.forEach((c, ci) => {
         answers.communities[c] = {};
         const base = { kind: "q", theme: "gc", scope: "community", community: c, commIndex: ci, commTotal: comms.length };
         const cAr = COMMUNITY_AR[c] || c;
-        s.push({ ...base, part: "Part E · Your community", title: `Life in ${c}`, titleAr: `الحياة في ${cAr}`, sub: "1 of 3", subAr: "1 من 3", qs: ["E1", "E2", "E3", "E4"], handoff: ci === 0 });
-        s.push({ ...base, part: "Part E · Your community", title: `Service in ${c}`, titleAr: `الخدمة في ${cAr}`, sub: "2 of 3", subAr: "2 من 3", qs: ["E5", "E6", "E7"] });
-        s.push({ ...base, part: "Part E · Your community", title: `Your ${c} summer`, titleAr: `صيفك في ${cAr}`, sub: "3 of 3", subAr: "3 من 3", qs: ["E8", "E9"] });
+        const owned = units.filter(u => u.stage === "handed" && u.community === c).length;
+        const forAll = owned === 2 ? " for both of your units there" : owned > 2 ? ` for all ${owned} of your units there` : "";
+        const forAllAr = owned === 2 ? " لكلتا وحدتيك هناك" : owned > 2 ? " لكل وحداتك هناك" : "";
+        const note = `These questions are about ${c} as a whole, so you answer them once${forAll}.`;
+        const noteAr = `هذه الأسئلة عن ${cAr} ككل، لذلك تجيب عنها مرة واحدة${forAllAr}.`;
+        s.push({ ...base, part: "Part E · Your community", title: `Life in ${c}`, titleAr: `الحياة في ${cAr}`, sub: "Page 1 of 3", subAr: "صفحة 1 من 3", qs: ["E1", "E2", "E3", "E4"], handoff: ci === 0, note, noteAr });
+        s.push({ ...base, part: "Part E · Your community", title: `Service in ${c}`, titleAr: `الخدمة في ${cAr}`, sub: "Page 2 of 3", subAr: "صفحة 2 من 3", qs: ["E5", "E6", "E7"] });
+        s.push({ ...base, part: "Part E · Your community", title: `Your ${c} summer`, titleAr: `صيفك في ${cAr}`, sub: "Page 3 of 3", subAr: "صفحة 3 من 3", qs: ["E8", "E9"] });
       });
 
       s.push({ kind: "q", theme: "gd", scope: "customer", part: "Closing", title: "Before you go", titleAr: "قبل أن تغادر", qs: ["A7", "A8"] });
+
+      /* "Unit 1 of 2" counts only the units that Part covers (Part D skips units awaiting handover). */
+      const byPart = {};
+      s.filter(x => x.scope === "unit").forEach(x => (byPart[x.part] = byPart[x.part] || []).push(x));
+      Object.values(byPart).forEach(list => list.forEach((x, k) => { x.pos = k + 1; x.count = list.length; }));
       return s;
     }
+
+    /* ===================== SECTIONS =====================
+       Consecutive steps of the same Part form one section; in Part E each community is its own
+       section. At the end of a section the answers so far are sent, then the customer chooses to
+       continue with the next section or finish there. */
+    let SECTIONS = [];
+    const sent = new Set();      // ids of sections whose answers have been sent
+    let endedEarly = false;
+
+    function buildSections(steps) {
+      const out = [];
+      steps.forEach((s, i) => {
+        if (s.kind !== "q") return;
+        const key = s.part + "|" + (s.community || "");
+        const last = out[out.length - 1];
+        if (last && last.key === key) {
+          last.to = i;
+          if (s.scope === "unit") last.units.add(s.unit);
+          return;
+        }
+        const letter = (/^Part ([A-E])/.exec(s.part) || [])[1];
+        out.push({
+          key, id: (letter || s.part) + (s.community ? ":" + s.community : ""), part: s.part,
+          community: s.community || null, from: i, to: i, units: new Set(s.scope === "unit" ? [s.unit] : [])
+        });
+      });
+      return out;
+    }
+    const sectionAt = i => SECTIONS.find(s => i >= s.from && i <= s.to);
+    const secName = s => s.community ? `${s.part} — ${s.community}` : s.part;
+    const secNameAr = s => (PART_AR[s.part] || s.part) + (s.community ? ` — ${COMMUNITY_AR[s.community] || s.community}` : "");
+    /* Unit names, only for sections that cover some of the customer's units (Part C or D). */
+    function secWho(s) {
+      const u = [...s.units];
+      return u.length && u.length < UNITS.length ? u.map(i => UNITS[i].name).join(" · ") : "";
+    }
+    /* Rough time to answer: about 7 seconds per answer (each matrix row counts). */
+    function secMinutes(s) {
+      let n = 0;
+      for (let i = s.from; i <= s.to; i++) {
+        for (const id of STEPS[i].qs) n += Q[id].type === "matrix" ? itemsOf(Q[id], STEPS[i].community).length : 1;
+      }
+      return Math.max(1, Math.round(n * 7 / 60));
+    }
+    const minsAr = n => n === 1 ? "دقيقة واحدة تقريبًا" : n === 2 ? "دقيقتان تقريبًا" : n <= 10 ? `${n} دقائق تقريبًا` : `${n} دقيقة تقريبًا`;
 
     /* ===================== RENDER HELPERS ===================== */
     const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -2260,6 +2406,8 @@
       readStep(step);
       if (!validateStep(step)) return;
       if (cur === STEPS.length - 1) return submit();
+      const sec = sectionAt(cur);
+      if (sec && sec.to === cur) return submitSection(sec);
       render(cur + 1);
     }
 
@@ -2314,11 +2462,15 @@
     }
 
     /* ===================== SUBMIT ===================== */
-    function payload() {
+    function payload(status = "complete", early = false) {
       if (!REF) REF = "CX26-" + Math.random().toString(36).slice(2, 8).toUpperCase();
       return {
         survey: "CX-2026",
         ref: REF,
+        status,                    // "partial" (end of a section) or "complete" (the customer finished)
+        endedEarly: early,
+        sectionsDone: SECTIONS.filter(s => sent.has(s.id)).map(s => s.id),
+        sectionsTotal: SECTIONS.length,
         customerId: CUSTOMER.id || null,
         submittedAt: new Date().toISOString(),
         customer: answers.customer,
@@ -2333,24 +2485,92 @@
       return buckets.reduce((n, b) => n + Object.values(b || {}).filter(filled).length, 0);
     }
 
+    async function send(status, early = false) {
+      const data = payload(status, early);
+      if (!CONFIG.submitUrl) {
+        console.log("[CX survey] payload", data);
+        await new Promise(r => setTimeout(r, 900));
+        if (params.get("state") === "error") throw new Error("Simulated error");
+        return;
+      }
+      const res = await fetch(CONFIG.submitUrl, {
+        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data)
+      });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+    }
+
+    function setBusy(btn, busy) {
+      if (!btn) return;
+      if (busy) {
+        btn.dataset.label = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = `<span class="spinner" aria-hidden="true"></span>${btnLabel("Sending", "جارٍ الإرسال")}`;
+      } else {
+        btn.disabled = false;
+        if (btn.dataset.label) btn.innerHTML = btn.dataset.label;
+      }
+    }
+
+    /* Shown above the buttons when a section can't be sent; the customer stays where they are. */
+    function showSendError() {
+      let box = app.querySelector(".send-err");
+      if (!box) {
+        box = document.createElement("div");
+        box.className = "err-box send-err";
+        box.setAttribute("role", "alert");
+        box.innerHTML = `We couldn't send your answers. Check your internet connection and try again.
+      <span class="ar" lang="ar">تعذر إرسال إجاباتك. تحقق من اتصالك بالإنترنت وحاول مرة أخرى.</span>`;
+        app.querySelector(".nav").before(box);
+      }
+      box.hidden = false;
+    }
+
+    async function submitSection(sec) {
+      const btn = document.getElementById("nextBtn");
+      const had = sent.has(sec.id);
+      sent.add(sec.id);
+      setBusy(btn, true);
+      try {
+        await send("partial");
+        renderCheckpoint(sec);
+      } catch (err) {
+        console.warn("[CX survey] section send failed", err);
+        if (!had) sent.delete(sec.id);
+        setBusy(btn, false);
+        showSendError();
+      }
+    }
+
+    async function finishEarly() {
+      const btn = document.getElementById("finishBtn");
+      const other = document.getElementById("continueBtn");
+      setBusy(btn, true);
+      other.disabled = true;
+      try {
+        await send("complete", true);
+        endedEarly = true;
+        renderState("success");
+      } catch (err) {
+        console.warn("[CX survey] finish failed", err);
+        setBusy(btn, false);
+        other.disabled = false;
+        showSendError();
+      }
+    }
+
     async function submit() {
       const btn = document.getElementById("nextBtn") || document.getElementById("retryBtn");
-      if (btn) { btn.disabled = true; btn.innerHTML = `<span class="spinner" aria-hidden="true"></span>Sending`; }
-      const data = payload();
+      const sec = SECTIONS[SECTIONS.length - 1];
+      const had = sent.has(sec.id);
+      sent.add(sec.id);
+      setBusy(btn, true);
       try {
-        if (!CONFIG.submitUrl) {
-          console.log("[CX survey] payload", data);
-          await new Promise(r => setTimeout(r, 900));
-          if (params.get("state") === "error") throw new Error("Simulated error");
-        } else {
-          const res = await fetch(CONFIG.submitUrl, {
-            method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data)
-          });
-          if (!res.ok) throw new Error("HTTP " + res.status);
-        }
+        await send("complete");
+        endedEarly = false;
         renderState("success");
       } catch (err) {
         console.warn("[CX survey] submit failed", err);
+        if (!had) sent.delete(sec.id);
         renderState("error");
       }
     }
@@ -2445,7 +2665,7 @@
       if (!step || step.kind !== "q") { ctxBar.innerHTML = ""; ctxBar.hidden = true; return; }
       let who = "";
       if (step.scope === "unit") {
-        const of = UNITS.length > 1 ? `<span class="ctx-of">${step.unit + 1}/${UNITS.length}</span>` : "";
+        const of = step.count > 1 ? `<span class="ctx-of">${step.pos}/${step.count}</span>` : "";
         who = `<span class="ctx-who"><span class="ctx-k">Unit · <span lang="ar">الوحدة</span></span><b>${esc(UNITS[step.unit].name)}</b>${of}</span>`;
       } else if (step.scope === "community") {
         who = `<span class="ctx-who"><span class="ctx-k">Community · <span lang="ar">المجتمع</span></span><b>${esc(step.community)}</b><span class="ctx-of">${esc(step.sub.replace(" of ", "/"))}</span></span>`;
@@ -2472,9 +2692,9 @@
       let unitKey = "", unitKeyAr = "", unitVal = "", unitOf = "", unitOfAr = "";
       if (step.scope === "unit") {
         unitKey = "Unit"; unitKeyAr = "الوحدة"; unitVal = UNITS[step.unit].name;
-        if (UNITS.length > 1) unitOf = `${step.unit + 1} of ${UNITS.length}`;
+        if (step.count > 1) { unitOf = `${step.pos} of ${step.count}`; unitOfAr = `${step.pos} من ${step.count}`; }
       } else if (step.scope === "community") {
-        unitKey = "Community"; unitKeyAr = "المجتمع"; unitVal = step.community; unitOf = step.sub;
+        unitKey = "Community"; unitKeyAr = "المجتمع"; unitVal = step.community; unitOf = step.sub; unitOfAr = step.subAr;
       }
       hero.innerHTML = heroHtml({
         eyebrow: step.part, eyebrowAr: PART_AR[step.part], title: step.title, titleAr: step.titleAr,
@@ -2483,13 +2703,16 @@
       setContext(step);
 
       const last = i === STEPS.length - 1;
+      const secEnd = !last && sectionAt(i).to === i;
       app.innerHTML = `<div class="fade-in">
-    ${step.note ? `<p class="section-note">${bi(step.note, UI_AR[step.note])}</p>` : ""}
+    ${step.note ? `<p class="section-note">${bi(step.note, step.noteAr || UI_AR[step.note])}</p>` : ""}
     <form id="stepForm" novalidate>
       ${step.qs.map(id => renderQuestion(id, step)).join("")}
       <div class="nav">
         <button type="button" class="btn ghost" id="backBtn">${btnLabel("Back", "رجوع")}</button>
-        <button type="submit" class="btn" id="nextBtn">${last ? btnLabel("Submit answers", "إرسال الإجابات") : btnLabel("Continue", "متابعة") + '<span class="arrow" aria-hidden="true">→</span>'}</button>
+        <button type="submit" class="btn" id="nextBtn">${last ? btnLabel("Submit answers", "إرسال الإجابات")
+          : secEnd ? btnLabel("Submit section", "إرسال القسم")
+          : btnLabel("Continue", "متابعة") + '<span class="arrow" aria-hidden="true">→</span>'}</button>
       </div>
     </form></div>`;
 
@@ -2499,6 +2722,47 @@
       form.addEventListener("submit", e => { e.preventDefault(); next(); });
       document.getElementById("backBtn").addEventListener("click", () => { readStep(step); render(cur - 1); });
       if (focusTop) { window.scrollTo({ top: 0 }); app.focus({ preventScroll: true }); }
+    }
+
+    /* Shown after a section's answers have been sent: the sections so far, what comes next,
+       and the choice to continue or finish here. */
+    function renderCheckpoint(sec) {
+      const idx = SECTIONS.indexOf(sec);
+      const upNext = SECTIONS[idx + 1];
+      setContext(null);
+      updateProgress(100);
+      hero.innerHTML = heroHtml({
+        eyebrow: `Section ${idx + 1} of ${SECTIONS.length} saved`, eyebrowAr: `تم حفظ القسم ${idx + 1} من ${SECTIONS.length}`,
+        title: "Section complete", titleAr: "اكتمل هذا القسم"
+      });
+      const rows = SECTIONS.map(s => {
+        const state = sent.has(s.id) ? "done" : s === upNext ? "next" : "todo";
+        const m = secMinutes(s);
+        const en = state === "done" ? "Saved" : state === "next" ? `Up next · about ${m} min` : `About ${m} min`;
+        const ar = state === "done" ? "تم الحفظ" : state === "next" ? `التالي · ${minsAr(m)}` : minsAr(m);
+        const who = secWho(s);
+        return `<li class="sec is-${state}"${state === "next" ? ' aria-current="step"' : ""}>
+        <span class="sec-dot" aria-hidden="true"></span>
+        <span class="sec-en"><b>${esc(secName(s))}</b><small>${esc(en)}${who ? ` · ${esc(who)}` : ""}</small></span>
+        <span class="sec-ar" lang="ar"><b>${esc(secNameAr(s))}</b><small>${esc(ar)}</small></span>
+      </li>`;
+      }).join("");
+      app.innerHTML = `<div class="panel checkpoint fade-in">
+    <div class="state-icon ok"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+    <p class="lead" role="status">Thank you. Your answers for ${esc(secName(sec))} have reached us.</p>
+    <p class="ar lead-ar" lang="ar">شكرًا لك. وصلتنا إجاباتك عن ${esc(secNameAr(sec))}.</p>
+    <p>You can finish here, or continue with the next section. Either way, what you have answered so far is already saved.</p>
+    <p class="ar" lang="ar">يمكنك الإنهاء هنا أو المتابعة إلى القسم التالي. في الحالتين، إجاباتك حتى الآن محفوظة لدينا.</p>
+    <ol class="sec-list">${rows}</ol>
+    <div class="nav">
+      <button type="button" class="btn ghost" id="finishBtn">${btnLabel("Finish here", "إنهاء هنا")}</button>
+      <button type="button" class="btn" id="continueBtn">${btnLabel("Continue", "متابعة")}<span class="arrow" aria-hidden="true">→</span></button>
+    </div>
+  </div>`;
+      document.getElementById("continueBtn").addEventListener("click", () => render(sec.to + 1));
+      document.getElementById("finishBtn").addEventListener("click", finishEarly);
+      window.scrollTo({ top: 0 });
+      app.focus({ preventScroll: true });
     }
 
     function renderIntro() {
@@ -2520,6 +2784,8 @@
     <div class="units">${UNITS.map(u => `<div class="unit-card"><b>${esc(u.name)}</b><span class="pill ${u.stage}">${STAGE_LABEL[u.stage]} · <span lang="ar">${STAGE_AR[u.stage]}</span></span></div>`).join("")}</div>
     <p class="muted">Your answers are linked to your unit${UNITS.length > 1 ? "s" : ""} so that we can follow up on anything that needs attention.</p>
     <p class="muted ar" lang="ar">إجاباتك مرتبطة ${UNITS.length > 1 ? "بوحداتك" : "بوحدتك"} حتى نتمكن من متابعة أي أمر يحتاج إلى اهتمام.</p>
+    <p class="muted">The survey has ${SECTIONS.length} sections. Your answers are sent at the end of each one, so you can stop after any section or carry on.</p>
+    <p class="muted ar" lang="ar">يتكون الاستبيان من ${SECTIONS.length} أقسام. تُرسل إجاباتك في نهاية كل قسم، فيمكنك التوقف بعد أي قسم أو المتابعة.</p>
     <div class="nav" style="justify-content:flex-end"><button class="btn" id="startBtn" type="button">${btnLabel("Start survey", "ابدأ الاستبيان")}<span class="arrow" aria-hidden="true">→</span></button></div>
   </div>`;
       document.getElementById("startBtn").addEventListener("click", () => render(1));
@@ -2542,26 +2808,30 @@
         err: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 7v6M12 16.5v.5"/></svg>`
       };
       if (kind === "success" && !REF) payload(); // assigns the reference when previewing
-      const contact = answers.customer.A8 === "Yes";
       const count = answeredCount();
       const comms = Object.keys(answers.communities).length;
+      const doneN = SECTIONS.filter(s => sent.has(s.id)).length;
+      /* The contact line only appears once A8 has been answered (an early finish can skip it). */
+      const nextSteps = [
+        "Each team reviews the answers for its own area: your account, your unit and your community.",
+        answers.customer.A8 === "Yes" ? "You agreed to be contacted, so if anything needs attention a member of our team will reach out within 48 hours."
+          : answers.customer.A8 === "No" ? "You chose not to be contacted, so we won't follow up with you directly about these answers." : "",
+        "If you need to reach us in the meantime, quote your reference so we can find your answers."
+      ].filter(Boolean);
       const views = {
         success: `<div class="state-icon ok">${icons.ok}</div>
-      <p class="lead">Your answers have been received. They go directly to the teams responsible for each part of your experience.</p>
-      <p class="ar lead-ar" lang="ar">تم استلام إجاباتك، وستصل مباشرةً إلى الفرق المسؤولة عن كل جزء من تجربتك. شكرًا لوقتك.</p>
+      ${endedEarly
+          ? `<p class="lead">Thank you for your time. Your answers for ${doneN} of ${SECTIONS.length} sections have been received. They go directly to the teams responsible for each part of your experience.</p>
+      <p class="ar lead-ar" lang="ar">شكرًا لوقتك. وصلتنا إجاباتك عن ${doneN} من ${SECTIONS.length} أقسام، وستصل مباشرةً إلى الفرق المسؤولة عن كل جزء من تجربتك.</p>`
+          : `<p class="lead">Your answers have been received. They go directly to the teams responsible for each part of your experience.</p>
+      <p class="ar lead-ar" lang="ar">تم استلام إجاباتك، وستصل مباشرةً إلى الفرق المسؤولة عن كل جزء من تجربتك. شكرًا لوقتك.</p>`}
       <div class="facts">
         <div><b>${count || "—"}</b>answers recorded</div>
         <div><b>${UNITS ? UNITS.length : "—"}</b>${UNITS && UNITS.length === 1 ? "unit" : "units"}${comms ? ` · ${comms} ${comms === 1 ? "community" : "communities"}` : ""}</div>
         <div><b class="ref">${esc(REF || "—")}</b>your reference</div>
       </div>
       <h2 class="next-title">What happens next</h2>
-      <ol class="next-steps">
-        <li><span>01</span>Each team reviews the answers for its own area: your account, your unit and your community.</li>
-        <li><span>02</span>${contact
-            ? "You agreed to be contacted, so if anything needs attention a member of our team will reach out within 48 hours."
-            : "You chose not to be contacted, so we won't follow up with you directly about these answers."}</li>
-        <li><span>03</span>If you need to reach us in the meantime, quote your reference so we can find your answers.</li>
-      </ol>
+      <ol class="next-steps">${nextSteps.map((t, n) => `<li><span>${pad(n + 1)}</span>${t}</li>`).join("")}</ol>
       <p class="muted">You can now close this page.</p>`,
         error: `<div class="state-icon err">${icons.err}</div>
       <p class="lead">Something went wrong on our side. Your answers are still on this page, so nothing is lost.</p>
@@ -2587,6 +2857,7 @@
       renderState("invalid");
     } else {
       STEPS = buildSteps(UNITS);
+      SECTIONS = buildSections(STEPS);
       const preview = params.get("state");
       // Preview: ?state=success | error | invalid shows that screen directly.
       // ?state=error without ?preview=1 is still handled in submit(): the survey runs and the send fails.
