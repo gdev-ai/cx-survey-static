@@ -1746,7 +1746,7 @@
        store the latest payload per ref. A customer may finish after any section (endedEarly). */
     const CONFIG = {
       submitUrl: "",               // POST endpoint for the JSON payload. Empty = simulated success.
-      demoWhenNoParams: true       // No "u" params in the link -> show sample units (set false for production).
+      demoParam: "demo"            // ?demo=1 shows sample units. Any other link must carry a valid cid and u params.
     };
 
     /* ===================== QUESTION BANK (from the consolidated design) =====================
@@ -2003,31 +2003,62 @@
     const COMMUNITIES = { playa: "Playa", seashell: "Seashell" };
     const STAGES = { pre: "pre", "pre-handover": "pre", handed: "handed", "handed-over": "handed" };
 
+    /* Link built by the SFMC data extension CX_Survey_2026_Static (column SurveyQuery):
+         ?cid=<Salesforce AccountId>&name=<first name>&u=<unit>|<handed|pre>|<Playa|Seashell>&u=...
+       Rules when data is missing or wrong:
+         - cid missing or not a Salesforce Account Id      -> "link isn't valid" (answers could not be traced)
+         - no u at all, or no usable u                      -> "link isn't valid"
+         - one bad u (no name, unknown stage, handed unit
+           without a known community)                       -> that unit is skipped, the rest of the survey runs;
+                                                               the skipped values travel in the payload (linkIssues)
+         - pre-handover unit without community              -> kept, shown without the project
+         - same unit twice                                  -> shown once
+         - name missing, empty, or not just letters . ' -  -> "Dear customer"
+       ?demo=1 shows sample units. */
+    const CID_RE = /^001[A-Za-z0-9]{12}([A-Za-z0-9]{3})?$/;
+    const MAX_UNITS = 60;
+    /* Control and bidi marks (Salesforce text often carries U+200F), then collapse whitespace. */
+    const clean = s => String(s || "").replace(/[\u0000-\u001F\u007F​-‏‪-‮⁦-⁩﻿]/g, "").replace(/\s+/g, " ").trim();
+    const LINK_ISSUES = [];
+
     function parseUnits() {
-      const raw = params.getAll("u").filter(s => s.trim());
-      if (!raw.length) return CONFIG.demoWhenNoParams ? "demo" : null;
+      if (params.get(CONFIG.demoParam) === "1") return "demo";
+      const cid = clean(params.get("cid"));
+      if (!CID_RE.test(cid)) { LINK_ISSUES.push("cid:" + (cid ? "invalid" : "missing")); return null; }
+      const raw = params.getAll("u").map(clean).filter(Boolean);
+      if (!raw.length) { LINK_ISSUES.push("u:missing"); return null; }
       const units = [];
+      const seen = new Set();
       for (const r of raw) {
-        const [name, stageRaw, commRaw] = r.split("|").map(s => (s || "").trim());
+        const [nameRaw, stageRaw, commRaw] = r.split("|").map(clean);
+        const name = (nameRaw || "").slice(0, 60);
         const stage = STAGES[(stageRaw || "").toLowerCase()];
         const community = COMMUNITIES[(commRaw || "").toLowerCase()] || null;
-        if (!name || !stage) return null;
-        if (stage === "handed" && !community) return null;
-        units.push({ name, stage, community });
+        if (!name || !stage || (stage === "handed" && !community)) { LINK_ISSUES.push("u:skipped:" + r.slice(0, 80)); continue; }
+        const key = `${community}|${name}`.toLowerCase();
+        if (seen.has(key)) continue;
+        if (units.length >= MAX_UNITS) { LINK_ISSUES.push("u:over-limit:" + r.slice(0, 80)); continue; }
+        seen.add(key);
+        units.push({ name, stage, community, label: community ? `${community} · ${name}` : name });
       }
-      return units;
+      return units.length ? units : null;
     }
 
     const DEMO_UNITS = [
-      { name: "Playa — Villa B12-03", stage: "handed", community: "Playa" },
-      { name: "Seashell — Chalet S4-118", stage: "handed", community: "Seashell" },
-      { name: "Playa — Villa R-21", stage: "pre", community: null }
+      { name: "B12-03", stage: "handed", community: "Playa", label: "Playa · B12-03" },
+      { name: "S4-118", stage: "handed", community: "Seashell", label: "Seashell · S4-118" },
+      { name: "R-21", stage: "pre", community: "Playa", label: "Playa · R-21" }
     ];
 
-    let parsed = parseUnits();
+    let parsed;
+    try { parsed = parseUnits(); } catch (e) { console.warn("[CX survey] link parse failed", e); parsed = null; }
     const isDemo = parsed === "demo";
     const UNITS = isDemo ? DEMO_UNITS : parsed;
-    const CUSTOMER = { id: params.get("cid") || "", name: (params.get("name") || "").trim() };
+    /* Salesforce first names arrive as typed: "abdelkader farid", "MAGDA". Fix the case only when it is all one case. */
+    const tidyName = s => (s === s.toLowerCase() || s === s.toUpperCase())
+      ? s.toLowerCase().replace(/(^|[\s'-])([a-z])/g, (m, p, c) => p + c.toUpperCase()) : s;
+    const nameRaw = clean(params.get("name")).slice(0, 40);
+    const CUSTOMER = { id: isDemo ? "" : clean(params.get("cid")), name: /^[\p{L}\p{M}][\p{L}\p{M} .'-]*$/u.test(nameRaw) ? tidyName(nameRaw) : "" };
 
     /* ===================== STEP PLAN ===================== */
     const STAGE_LABEL = { pre: "Awaiting handover", handed: "Handed over" };
@@ -2130,7 +2161,7 @@
     /* Unit names, only for sections that cover some of the customer's units (Part C or D). */
     function secWho(s) {
       const u = [...s.units];
-      return u.length && u.length < UNITS.length ? u.map(i => UNITS[i].name).join(" · ") : "";
+      return u.length && u.length < UNITS.length ? u.map(i => UNITS[i].label).join(" · ") : "";
     }
     /* Rough time to answer: about 7 seconds per answer (each matrix row counts). */
     function secMinutes(s) {
@@ -2349,7 +2380,7 @@
       let unitTag = "";
       if (step.scope === "unit") {
         const u = UNITS[step.unit];
-        unitTag = `<div class="unit-tag"><span>Unit</span><b>${esc(u.name)}</b>${UNITS.length > 1 ? `<span class="unit-of">${step.unit + 1} of ${UNITS.length}</span>` : ""}</div>`;
+        unitTag = `<div class="unit-tag"><span>Unit</span><b>${esc(u.label)}</b>${UNITS.length > 1 ? `<span class="unit-of">${step.unit + 1} of ${UNITS.length}</span>` : ""}</div>`;
       } else if (step.scope === "community") {
         unitTag = `<div class="unit-tag"><span>Community</span><b>${esc(step.community)}</b><span class="unit-of">${esc(step.sub)}</span></div>`;
       }
@@ -2422,7 +2453,7 @@
       <div><b>${mins}</b>to complete</div>
       <div><b>${UNITS.length} ${UNITS.length === 1 ? "unit" : "units"}</b>covered in this survey</div>
     </div>
-    <ul class="unit-list">${UNITS.map(u => `<li><span>${esc(u.name)}</span><span class="stage">${STAGE_LABEL[u.stage]}</span></li>`).join("")}</ul>
+    <ul class="unit-list">${UNITS.map(u => `<li><span>${esc(u.label)}</span><span class="stage">${STAGE_LABEL[u.stage]}</span></li>`).join("")}</ul>
     <p class="muted">Your answers are linked to your unit${UNITS.length > 1 ? "s" : ""} so that we can follow up on anything that needs attention.</p>
     <div class="nav" style="justify-content:flex-end"><button class="btn" id="startBtn" type="button">Start survey</button></div>
   </div>`;
@@ -2472,9 +2503,11 @@
         sectionsDone: SECTIONS.filter(s => sent.has(s.id)).map(s => s.id),
         sectionsTotal: SECTIONS.length,
         customerId: CUSTOMER.id || null,
+        demo: isDemo,
+        linkIssues: LINK_ISSUES,
         submittedAt: new Date().toISOString(),
         customer: answers.customer,
-        units: UNITS.map((u, i) => ({ unit: u.name, stage: u.stage, community: u.community, answers: answers.units[i] })),
+        units: UNITS.map((u, i) => ({ unit: u.name, project: u.community, stage: u.stage, community: u.community, answers: answers.units[i] })),
         communities: Object.entries(answers.communities).map(([community, a]) => ({ community, answers: a }))
       };
     }
@@ -2493,9 +2526,15 @@
         if (params.get("state") === "error") throw new Error("Simulated error");
         return;
       }
-      const res = await fetch(CONFIG.submitUrl, {
-        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data)
-      });
+      /* A stalled connection must not leave the button spinning: give up after 20 s and show the retry message. */
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 20000);
+      let res;
+      try {
+        res = await fetch(CONFIG.submitUrl, {
+          method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data), signal: ctrl.signal
+        });
+      } finally { clearTimeout(timer); }
       if (!res.ok) throw new Error("HTTP " + res.status);
     }
 
@@ -2666,7 +2705,7 @@
       let who = "";
       if (step.scope === "unit") {
         const of = step.count > 1 ? `<span class="ctx-of">${step.pos}/${step.count}</span>` : "";
-        who = `<span class="ctx-who"><span class="ctx-k">Unit · <span lang="ar">الوحدة</span></span><b>${esc(UNITS[step.unit].name)}</b>${of}</span>`;
+        who = `<span class="ctx-who"><span class="ctx-k">Unit · <span lang="ar">الوحدة</span></span><b>${esc(UNITS[step.unit].label)}</b>${of}</span>`;
       } else if (step.scope === "community") {
         who = `<span class="ctx-who"><span class="ctx-k">Community · <span lang="ar">المجتمع</span></span><b>${esc(step.community)}</b><span class="ctx-of">${esc(step.sub.replace(" of ", "/"))}</span></span>`;
       }
@@ -2691,7 +2730,7 @@
 
       let unitKey = "", unitKeyAr = "", unitVal = "", unitOf = "", unitOfAr = "";
       if (step.scope === "unit") {
-        unitKey = "Unit"; unitKeyAr = "الوحدة"; unitVal = UNITS[step.unit].name;
+        unitKey = "Unit"; unitKeyAr = "الوحدة"; unitVal = UNITS[step.unit].label;
         if (step.count > 1) { unitOf = `${step.pos} of ${step.count}`; unitOfAr = `${step.pos} من ${step.count}`; }
       } else if (step.scope === "community") {
         unitKey = "Community"; unitKeyAr = "المجتمع"; unitVal = step.community; unitOf = step.sub; unitOfAr = step.subAr;
@@ -2781,7 +2820,7 @@
       <div><b>${UNITS.length}</b>${UNITS.length === 1 ? "unit" : "units"} covered<span class="ar" lang="ar">${UNITS.length === 1 ? "وحدة واحدة" : `${UNITS.length} وحدات`}</span></div>
       <div><b>${STEPS.length - 1}</b>short steps<span class="ar" lang="ar">${STEPS.length - 1} خطوة قصيرة</span></div>
     </div>
-    <div class="units">${UNITS.map(u => `<div class="unit-card"><b>${esc(u.name)}</b><span class="pill ${u.stage}">${STAGE_LABEL[u.stage]} · <span lang="ar">${STAGE_AR[u.stage]}</span></span></div>`).join("")}</div>
+    <div class="units">${UNITS.map(u => `<div class="unit-card"><b>${esc(u.label)}</b><span class="pill ${u.stage}">${STAGE_LABEL[u.stage]} · <span lang="ar">${STAGE_AR[u.stage]}</span></span></div>`).join("")}</div>
     <p class="muted">Your answers are linked to your unit${UNITS.length > 1 ? "s" : ""} so that we can follow up on anything that needs attention.</p>
     <p class="muted ar" lang="ar">إجاباتك مرتبطة ${UNITS.length > 1 ? "بوحداتك" : "بوحدتك"} حتى نتمكن من متابعة أي أمر يحتاج إلى اهتمام.</p>
     <p class="muted">The survey has ${SECTIONS.length} sections. Your answers are sent at the end of each one, so you can stop after any section or carry on.</p>
@@ -2853,16 +2892,23 @@
 
 
     /* ===================== BOOT ===================== */
-    if (!UNITS) {
-      renderState("invalid");
-    } else {
-      STEPS = buildSteps(UNITS);
-      SECTIONS = buildSections(STEPS);
-      const preview = params.get("state");
-      // Preview: ?state=success | error | invalid shows that screen directly.
-      // ?state=error without ?preview=1 is still handled in submit(): the survey runs and the send fails.
-      if (preview === "success" || preview === "invalid" || (preview === "error" && params.get("preview") === "1")) renderState(preview);
-      else render(0);
+    if (LINK_ISSUES.length) console.warn("[CX survey] link issues", LINK_ISSUES);
+    try {
+      if (!UNITS) {
+        renderState("invalid");
+      } else {
+        STEPS = buildSteps(UNITS);
+        SECTIONS = buildSections(STEPS);
+        const preview = params.get("state");
+        // Preview: ?state=success | error | invalid shows that screen directly.
+        // ?state=error without ?preview=1 is still handled in submit(): the survey runs and the send fails.
+        if (preview === "success" || preview === "invalid" || (preview === "error" && params.get("preview") === "1")) renderState(preview);
+        else render(0);
+      }
+    } catch (err) {
+      /* Never leave a blank page: anything unexpected while building the survey shows the invalid-link screen. */
+      console.error("[CX survey] could not start", err);
+      try { renderState("invalid"); } catch (e) { document.body.innerHTML = "<p style='padding:24px;font-family:sans-serif'>This survey link isn't valid. · رابط الاستبيان غير صالح</p>"; }
     }
 
   </script>
