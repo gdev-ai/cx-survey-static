@@ -338,7 +338,7 @@
     .pct {
       font-weight: 600;
       color: var(--hero-ink);
-      margin-left: 10px;
+      margin-inline-start: 10px;
       font-variant-numeric: tabular-nums;
     }
 
@@ -424,7 +424,7 @@
       font-weight: 600;
       letter-spacing: .08em;
       color: var(--accent);
-      margin-right: 10px;
+      margin-inline-end: 10px;
       vertical-align: 2px;
       font-variant-numeric: tabular-nums;
     }
@@ -446,7 +446,7 @@
       font-size: 11px;
       color: var(--muted);
       font-weight: 500;
-      margin-left: 8px;
+      margin-inline-start: 8px;
       text-transform: uppercase;
       letter-spacing: .1em;
     }
@@ -622,7 +622,7 @@
     }
 
     .anchors>div:last-child {
-      text-align: right;
+      text-align: end;
     }
 
     .anchors .ar {
@@ -660,7 +660,7 @@
 
     .m-row {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) repeat(5, 48px) 64px;
+      grid-template-columns: minmax(0, 1fr) repeat(5, 48px) minmax(64px, auto);
       align-items: center;
       gap: 0 6px;
       padding: 0 16px;
@@ -699,7 +699,7 @@
 
     .m-label {
       font-size: 15px;
-      padding-right: 12px;
+      padding-inline-end: 12px;
     }
 
     .m-label .ar {
@@ -758,7 +758,7 @@
     .chips .box {
       justify-content: flex-start;
       padding: 12px 18px;
-      text-align: left;
+      text-align: start;
       min-height: 52px;
       border-radius: var(--card-radius);
       font-size: 15px;
@@ -770,7 +770,7 @@
       height: 18px;
       border-radius: 50%;
       border: 1.5px solid var(--line-strong);
-      margin-right: 12px;
+      margin-inline-end: 12px;
       flex: 0 0 auto;
       transition: box-shadow .15s ease, border-color .15s ease;
     }
@@ -810,7 +810,7 @@
       content: "+";
       display: inline-block;
       width: 12px;
-      margin-right: 6px;
+      margin-inline-end: 6px;
       text-align: center;
       font-size: 13px;
       opacity: .45;
@@ -967,8 +967,8 @@
     }
 
     .facts>div+div {
-      padding-left: 20px;
-      border-left: 1px solid var(--line);
+      padding-inline-start: 20px;
+      border-inline-start: 1px solid var(--line);
     }
 
     .facts b {
@@ -1132,7 +1132,7 @@
     }
 
     .err-box {
-      border-left: 3px solid var(--error);
+      border-inline-start: 3px solid var(--error);
       background: var(--accent-tint);
       padding: 12px 16px;
       margin: 0 0 18px;
@@ -1290,7 +1290,7 @@
       }
 
       .facts>div+div {
-        padding-left: 12px;
+        padding-inline-start: 12px;
       }
 
       .panel {
@@ -1659,6 +1659,194 @@
         grid-column: 2;
       }
     }
+
+    /* ---------- One language at a time (EN / AR switch in the header) ---------- */
+    .top-end {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    /* The logo lockup and the "3 / 12 · 40%" counter keep their order in Arabic too */
+    .brand,
+    .step-count {
+      direction: ltr;
+      unicode-bidi: isolate;
+    }
+
+    .lang-switch {
+      display: inline-flex;
+      flex: none;
+      direction: ltr;
+      padding: 2px;
+      border: 1px solid var(--hero-line);
+      border-radius: 999px;
+    }
+
+    .lang-switch button {
+      height: 32px;
+      min-width: 44px;
+      padding: 0 12px;
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--hero-muted);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      cursor: pointer;
+      transition: background-color .2s ease, color .2s ease;
+    }
+
+    .lang-switch button[lang="ar"] {
+      font-family: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0;
+    }
+
+    .lang-switch button[aria-pressed="true"] {
+      background: var(--hero-ink);
+      color: var(--hero);
+    }
+
+    .lang-switch button:focus-visible {
+      outline: 2px solid var(--hero-ink);
+      outline-offset: 2px;
+    }
+
+    /* Co-branded header: logos stay centred, the switch sits at the end */
+    body.co-brand .topbar-inner {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+    }
+
+    body.co-brand .topbar-inner::before {
+      content: "";
+    }
+
+    body.co-brand .top-end {
+      justify-self: end;
+    }
+
+    @media (max-width: 400px) {
+
+      body.co-brand .gd-logo,
+      body.co-brand .gc-logo {
+        width: 100px;
+      }
+
+      body.co-brand .logo-sep {
+        margin: 0 12px;
+      }
+
+      .lang-switch button {
+        min-width: 38px;
+        padding: 0 9px;
+      }
+    }
+
+    /* Arabic: Arabic type everywhere, no tracking (it breaks letter joins), mirrored cues */
+    html[lang="ar"] body,
+    html[lang="ar"] h1,
+    html[lang="ar"] .greeting {
+      font-family: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+    }
+
+    html[lang="ar"] body * {
+      letter-spacing: 0 !important;
+    }
+
+    html[lang="ar"] h1 {
+      font-weight: 500;
+      line-height: 1.3;
+    }
+
+    html[dir="rtl"] .btn .arrow {
+      transform: scaleX(-1);
+    }
+
+    html[dir="rtl"] .btn:hover .arrow {
+      transform: scaleX(-1) translateX(3px);
+    }
+
+    html[dir="rtl"] .q.has-error,
+    html[dir="rtl"] .m-row.has-error {
+      box-shadow: inset -3px 0 0 var(--error);
+    }
+
+    html[dir="rtl"] .progress {
+      transform: scaleX(-1);
+    }
+
+    /* ---------- Intro: title (hero) → greeting → intro → indicators → properties ---------- */
+    .panel .greeting {
+      font-family: var(--font-head);
+      font-weight: 500;
+      font-size: 24px;
+      line-height: 1.3;
+      margin: 0 0 16px;
+    }
+
+    .intro-copy p {
+      margin: 0 0 12px;
+      line-height: 1.6;
+    }
+
+    .intro-copy p:last-child {
+      margin-bottom: 0;
+      font-weight: 500;
+    }
+
+    .facts span {
+      display: block;
+    }
+
+    .units-title {
+      margin-bottom: 10px;
+    }
+
+    @media (max-width: 640px) {
+      body.is-intro .hero-inner {
+        padding-top: 22px;
+        padding-bottom: 20px;
+      }
+
+      .panel .greeting {
+        font-size: 20px;
+        margin-bottom: 12px;
+      }
+
+      .intro-copy p {
+        font-size: 15px;
+        line-height: 1.55;
+        margin-bottom: 10px;
+      }
+
+      .facts {
+        margin: 18px 0;
+      }
+
+      .facts>div,
+      .facts>div+div {
+        padding: 12px 10px;
+        font-size: 12px;
+        line-height: 1.35;
+      }
+
+      .facts>div:first-child {
+        padding-inline-start: 0;
+      }
+
+      .unit-card {
+        padding: 10px 14px;
+      }
+
+      .units {
+        gap: 8px;
+        margin-bottom: 16px;
+      }
+    }
   </style>
 </head>
 
@@ -1711,7 +1899,13 @@
         <img class="gc-logo" alt="G Communities"
           src="data:image/png;base64,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">
       </div>
-      <div class="step-count" id="stepCount"></div>
+      <div class="top-end">
+        <div class="step-count" id="stepCount"></div>
+        <div class="lang-switch" id="langSwitch" role="group" aria-label="Language · اللغة">
+          <button type="button" lang="en" data-lang="en" aria-pressed="true">EN</button>
+          <button type="button" lang="ar" data-lang="ar" aria-pressed="false">عربي</button>
+        </div>
+      </div>
     </div>
     <div class="ctx-bar" id="ctxBar" hidden aria-hidden="true"></div>
     <div class="progress" id="progress" role="progressbar" aria-label="Section progress" aria-valuemin="0"
@@ -2161,7 +2355,7 @@
     /* Unit names, only for sections that cover some of the customer's units (Part C or D). */
     function secWho(s) {
       const u = [...s.units];
-      return u.length && u.length < UNITS.length ? u.map(i => UNITS[i].label).join(" · ") : "";
+      return u.length && u.length < UNITS.length ? u.map(i => unitLabel(UNITS[i])).join(" · ") : "";
     }
     /* Rough time to answer: about 7 seconds per answer (each matrix row counts). */
     function secMinutes(s) {
@@ -2177,11 +2371,48 @@
     const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
     const sub = (t, c) => c ? t.replaceAll("[Community]", c) : t;
     const subAr = (t, c) => c ? t.replaceAll("[Community]", COMMUNITY_AR[c] || c) : t;
-    /* English text followed by its Arabic line (if one exists). */
-    const bi = (en, ar, cls = "ar") => `${esc(en)}${ar ? `<span class="${cls}" lang="ar">${esc(ar)}</span>` : ""}`;
-    /* Button label: English and Arabic side by side on wide screens, stacked on phones (see .btn-label). */
-    const btnLabel = (en, ar) => `<span class="btn-label"><span>${esc(en)}</span><span lang="ar">${esc(ar)}</span></span>`;
-    const optHtml = o => bi(o, OPT_AR[o] && OPT_AR[o] !== o ? OPT_AR[o] : "", "ar opt-ar");
+    /* ===================== LANGUAGE =====================
+       One language at a time. Default: Arabic when the browser's first language is Arabic,
+       otherwise English. The choice made with the header switch is remembered on the device.
+       Every view renders in LANG; switching re-renders the current view (answers are kept). */
+    const LANG_KEY = "cx26-lang";
+    let LANG = (() => {
+      try { const v = localStorage.getItem(LANG_KEY); if (v === "en" || v === "ar") return v; } catch (e) { }
+      const first = (navigator.languages && navigator.languages[0]) || navigator.language || "";
+      return /^ar\b/i.test(first) ? "ar" : "en";
+    })();
+    const isAr = () => LANG === "ar";
+    /* The active language's text; falls back to English when there is no Arabic. */
+    const L = (en, ar) => isAr() && ar ? ar : en;
+    const qText = (o, c) => isAr() && o.ar ? subAr(o.ar, c) : sub(o.en, c);
+    /* Unit names stay as in the contract; the community part is written in Arabic in Arabic. */
+    const unitLabel = u => isAr() && u.community ? `${COMMUNITY_AR[u.community] || u.community} · ${u.name}` : u.label;
+    const commName = c => L(c, COMMUNITY_AR[c]);
+    /* Arabic noun after a number: 1, 2 (dual), 3–10 (plural), 11+ (singular). */
+    const arCount = (n, one, two, few, many) => n === 1 ? one : n === 2 ? two : n <= 10 ? few : many;
+    let redraw = null;           // re-renders the current view in the new language
+
+    function applyLang() {
+      document.documentElement.lang = LANG;
+      document.documentElement.dir = isAr() ? "rtl" : "ltr";
+      document.title = L("Customer Experience Survey 2026 · G Developments", "استبيان تجربة العملاء 2026 · G Developments");
+      document.getElementById("progress").setAttribute("aria-label", L("Section progress", "تقدم القسم"));
+      document.querySelectorAll("#langSwitch button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lang === LANG)));
+    }
+    document.getElementById("langSwitch").addEventListener("click", e => {
+      const b = e.target.closest("button[data-lang]");
+      if (!b || b.dataset.lang === LANG) return;
+      LANG = b.dataset.lang;
+      try { localStorage.setItem(LANG_KEY, LANG); } catch (err) { }
+      applyLang();
+      // While answers are being sent the view stays as it is; the next view opens in the new language.
+      if (redraw && !document.querySelector("#app .spinner")) redraw();
+    });
+    applyLang();
+
+    const bi = (en, ar) => esc(L(en, ar));
+    const btnLabel = (en, ar) => `<span class="btn-label">${esc(L(en, ar))}</span>`;
+    const optHtml = o => esc(L(o, OPT_AR[o]));
     let uid = 0;
     const nid = () => "f" + (++uid);
 
@@ -2200,14 +2431,14 @@
     function satLegendAr() {
       return `<span class="ar legend-ar" lang="ar" dir="rtl"><bdi>1★ = ${esc(SAT.ar[0])}</bdi> · <bdi>5★ = ${esc(SAT.ar[1])}</bdi></span>`;
     }
+    const satLegend = () => `<bdi>1 = ${esc(L(SAT.en[0], SAT.ar[0]))}</bdi> · <bdi>5 = ${esc(L(SAT.en[1], SAT.ar[1]))}</bdi>`;
 
     function anchorsFor(q) {
       if (q.type === "nps") return { en: ["Not at all likely", "Extremely likely"], ar: ["غير محتمل إطلاقًا", "محتمل جدًا"] };
       return q.anchors || SAT;
     }
     function anchorsHtml(a) {
-      return `<div class="anchors"><div>${esc(a.en[0])}${a.ar ? `<span class="ar" lang="ar">${esc(a.ar[0])}</span>` : ""}</div>
-          <div>${esc(a.en[1])}${a.ar ? `<span class="ar" lang="ar">${esc(a.ar[1])}</span>` : ""}</div></div>`;
+      return `<div class="anchors"><div>${esc(L(a.en[0], a.ar && a.ar[0]))}</div><div>${esc(L(a.en[1], a.ar && a.ar[1]))}</div></div>`;
     }
 
     const STAR_SVG = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z"/></svg>`;
@@ -2217,8 +2448,9 @@
       const stars = extraClass !== "nps";
       let h = `<div class="scale ${stars ? "stars" : ""} ${extraClass}">`;
       for (let n = from; n <= to; n++) {
-        const face = stars ? `${STAR_SVG}<span class="sr-only">${n} of ${to}</span>` : n;
-        h += `<label${stars ? ` title="${n} of ${to}"` : ""}><input type="radio" name="${name}" value="${n}" ${String(val) === String(n) ? "checked" : ""}><span class="box">${face}</span></label>`;
+        const of = `${n} ${L("of", "من")} ${to}`;
+        const face = stars ? `${STAR_SVG}<span class="sr-only">${of}</span>` : n;
+        h += `<label${stars ? ` title="${of}"` : ""}><input type="radio" name="${name}" value="${n}" ${String(val) === String(n) ? "checked" : ""}><span class="box">${face}</span></label>`;
       }
       return h + "</div>";
     }
@@ -2244,7 +2476,7 @@
         body = scaleHtml(name, 0, 10, a[id], "nps") + anchorsHtml(anchorsFor(q));
       } else if (q.type === "rating") {
         body = scaleHtml(name, 1, 5, a[id]) + anchorsHtml(anchorsFor(q));
-        if (q.na) body += `<div class="na-row"><label><input type="radio" name="${name}" value="N/A" ${a[id] === "N/A" ? "checked" : ""}><span class="box">${esc((q.naLabel || NA_LABEL).en)}<span class="ar" lang="ar">${esc((q.naLabel || NA_LABEL).ar)}</span></span></label></div>`;
+        if (q.na) body += `<div class="na-row"><label><input type="radio" name="${name}" value="N/A" ${a[id] === "N/A" ? "checked" : ""}><span class="box">${esc(qText(q.naLabel || NA_LABEL))}</span></label></div>`;
       } else if (q.type === "matrix") {
         body = matrixBody(q, a, c);
       } else if (q.type === "single" || q.type === "yesno") {
@@ -2258,10 +2490,9 @@
       } else if (q.type === "text") {
         const fid = nid();
         return `<div class="q" data-q="${id}" ${hidden}>
-      <label class="q-label" for="${fid}"><span class="q-num">${esc(id)}</span>${esc(sub(q.en, c))}${q.optional ? '<span class="opt-tag">Optional · اختياري</span>' : ""}
-      <span class="ar" lang="ar">${esc(subAr(q.ar, c))}</span></label>
+      <label class="q-label" for="${fid}"><span class="q-num">${esc(id)}</span>${esc(qText(q, c))}${q.optional ? `<span class="opt-tag">${L("Optional", "اختياري")}</span>` : ""}</label>
       <div class="q-body"><textarea id="${fid}" name="${name}" maxlength="2000">${esc(a[id] || "")}</textarea></div>
-      <div class="q-error" role="alert">Please answer this question. · يرجى الإجابة على هذا السؤال.</div></div>`;
+      <div class="q-error" role="alert">${L("Please answer this question.", "يرجى الإجابة على هذا السؤال.")}</div></div>`;
       }
 
       let follow = "";
@@ -2270,7 +2501,7 @@
         const cur = a[id];
         const show = Array.isArray(cur) ? cur.includes(q.follow.when) : cur === q.follow.when;
         follow = `<div class="follow" data-follow="${q.follow.key}" ${show ? "" : "hidden"}>
-      <label for="${fid}">${bi(q.follow.label, UI_AR[q.follow.label])}${q.follow.required ? "" : ' <span class="opt-tag">Optional · اختياري</span>'}</label>
+      <label for="${fid}">${bi(q.follow.label, UI_AR[q.follow.label])}${q.follow.required ? "" : ` <span class="opt-tag">${L("Optional", "اختياري")}</span>`}</label>
       ${q.follow.key === "D8_detail" ? `<textarea id="${fid}" name="${q.follow.key}" maxlength="1000">${esc(a[q.follow.key] || "")}</textarea>`
             : `<input type="text" id="${fid}" name="${q.follow.key}" maxlength="200" value="${esc(a[q.follow.key] || "")}">`}
     </div>`;
@@ -2280,8 +2511,8 @@
     <legend>${labelBlock(id, q, c, "span")}</legend>
     <div class="q-body">${body}${follow}</div>
     <div class="q-error" role="alert">${q.type === "matrix"
-          ? "Please rate every item, or choose N/A. · يرجى تقييم كل بند أو اختيار لا ينطبق."
-          : "Please answer this question. · يرجى الإجابة على هذا السؤال."}</div>
+          ? L("Please rate every item, or choose N/A.", "يرجى تقييم كل بند أو اختيار لا ينطبق.")
+          : L("Please answer this question.", "يرجى الإجابة على هذا السؤال.")}</div>
   </fieldset></div>`;
     }
 
@@ -2557,8 +2788,8 @@
         box = document.createElement("div");
         box.className = "err-box send-err";
         box.setAttribute("role", "alert");
-        box.innerHTML = `We couldn't send your answers. Check your internet connection and try again.
-      <span class="ar" lang="ar">تعذر إرسال إجاباتك. تحقق من اتصالك بالإنترنت وحاول مرة أخرى.</span>`;
+        box.innerHTML = L("We couldn't send your answers. Check your internet connection and try again.",
+          "تعذر إرسال إجاباتك. تحقق من اتصالك بالإنترنت وحاول مرة أخرى.");
         app.querySelector(".nav").before(box);
       }
       box.hidden = false;
@@ -2625,18 +2856,17 @@
     const pad = n => String(n).padStart(2, "0");
 
     function labelBlock(id, q, c, tag = "div") {
-      return `<span class="q-head"><${tag} class="q-label"><span class="q-num">${esc(id)}</span>${esc(sub(q.en, c))}${q.optional ? '<span class="opt-tag">Optional · اختياري</span>' : ""}
-    <span class="ar" lang="ar">${esc(subAr(q.ar, c))}</span>${q.hint ? `<span class="q-hint" style="display:block">${esc(q.hint)}${UI_AR[q.hint] ? ` · <span lang="ar">${esc(UI_AR[q.hint])}</span>` : ""}</span>` : ""}</${tag}></span>`;
+      return `<span class="q-head"><${tag} class="q-label"><span class="q-num">${esc(id)}</span>${esc(qText(q, c))}${q.optional ? `<span class="opt-tag">${L("Optional", "اختياري")}</span>` : ""}${q.hint ? `<span class="q-hint" style="display:block">${esc(L(q.hint, UI_AR[q.hint]))}</span>` : ""}</${tag}></span>`;
     }
 
     function matrixBody(q, a, c) {
       let h = `<div class="mx">
-    <div class="mx-legend-m">1 = ${esc(SAT.en[0])} · 5 = ${esc(SAT.en[1])}${satLegendAr()}</div>`;
+    <div class="mx-legend-m">${satLegend()}</div>`;
       for (const it of itemsOf(q, c)) {
-        h += `<div class="m-row" data-item="${esc(it.id)}" role="radiogroup" aria-label="${esc(sub(it.en, c))}">
-      <div class="m-label"><span class="q-num">${esc(it.id)}</span>${esc(sub(it.en, c))}<span class="ar" lang="ar">${esc(subAr(it.ar, c))}</span></div>
+        h += `<div class="m-row" data-item="${esc(it.id)}" role="radiogroup" aria-label="${esc(qText(it, c))}">
+      <div class="m-label"><span class="q-num">${esc(it.id)}</span>${esc(qText(it, c))}</div>
       <div class="m-controls">${scaleHtml(it.id, 1, 5, a[it.id])}
-        ${q.na ? `<label class="na"><input type="radio" name="${it.id}" value="N/A" ${a[it.id] === "N/A" ? "checked" : ""}><span class="box">N/A</span></label>` : ""}
+        ${q.na ? `<label class="na"><input type="radio" name="${it.id}" value="N/A" ${a[it.id] === "N/A" ? "checked" : ""}><span class="box">${L("N/A", "لا ينطبق")}</span></label>` : ""}
       </div></div>`;
       }
       return h + "</div>";
@@ -2678,7 +2908,7 @@
     }
     function setProgress(i) {
       const total = STEPS.length - 1;
-      stepCount.innerHTML = i === 0 ? "" : `<span title="Step ${i} of ${total}">${i} / ${total}</span><span class="pct" id="pct" title="Answered in this section"></span>`;
+      stepCount.innerHTML = i === 0 ? "" : `<span title="${L(`Step ${i} of ${total}`, `الخطوة ${i} من ${total}`)}">${i} / ${total}</span><span class="pct" id="pct" title="${L("Answered in this section", "تمت الإجابة في هذا القسم")}"></span>`;
       // new section: jump to its current fill without animating backwards, then animate per answer
       bar.style.transition = "none";
       lastPct = -1;
@@ -2687,12 +2917,12 @@
       bar.style.transition = "";
     }
 
-    function heroHtml({ eyebrow, eyebrowAr, title, titleAr, unitKey, unitKeyAr, unitVal, unitOf, unitOfAr, num }) {
+    /* All text arrives in the active language. */
+    function heroHtml({ eyebrow, title, unitKey, unitVal, unitOf, num }) {
       return `<div class="fade-in">
-      <p class="eyebrow">${esc(eyebrow)}${eyebrowAr ? `<span class="eyebrow-ar" lang="ar">${esc(eyebrowAr)}</span>` : ""}</p>
+      ${eyebrow ? `<p class="eyebrow">${esc(eyebrow)}</p>` : ""}
       <h1>${esc(title)}</h1>
-      ${titleAr ? `<p class="h1-ar" lang="ar">${esc(titleAr)}</p>` : ""}
-      ${unitVal ? `<div class="hero-unit"><span class="k">${esc(unitKey)}${unitKeyAr ? ` · <span lang="ar">${esc(unitKeyAr)}</span>` : ""}</span><b>${esc(unitVal)}</b>${unitOf ? `<span class="of">${esc(unitOf)}${unitOfAr ? ` · <span lang="ar">${esc(unitOfAr)}</span>` : ""}</span>` : ""}</div>` : ""}
+      ${unitVal ? `<div class="hero-unit"><span class="k">${esc(unitKey)}</span><b><bdi>${esc(unitVal)}</bdi></b>${unitOf ? `<span class="of">${esc(unitOf)}</span>` : ""}</div>` : ""}
     </div>
     ${num ? `<div class="hero-num" aria-hidden="true">${num}</div>` : ""}`;
     }
@@ -2705,11 +2935,11 @@
       let who = "";
       if (step.scope === "unit") {
         const of = step.count > 1 ? `<span class="ctx-of">${step.pos}/${step.count}</span>` : "";
-        who = `<span class="ctx-who"><span class="ctx-k">Unit · <span lang="ar">الوحدة</span></span><b>${esc(UNITS[step.unit].label)}</b>${of}</span>`;
+        who = `<span class="ctx-who"><span class="ctx-k">${L("Unit", "الوحدة")}</span><b><bdi>${esc(unitLabel(UNITS[step.unit]))}</bdi></b>${of}</span>`;
       } else if (step.scope === "community") {
-        who = `<span class="ctx-who"><span class="ctx-k">Community · <span lang="ar">المجتمع</span></span><b>${esc(step.community)}</b><span class="ctx-of">${esc(step.sub.replace(" of ", "/"))}</span></span>`;
+        who = `<span class="ctx-who"><span class="ctx-k">${L("Community", "المجتمع")}</span><b>${esc(commName(step.community))}</b><span class="ctx-of">${esc(step.sub.replace("Page ", "").replace(" of ", "/"))}</span></span>`;
       }
-      ctxBar.innerHTML = `<div class="ctx-inner"><span class="ctx-part">${esc(step.part)}${PART_AR[step.part] ? ` · <span lang="ar">${esc(PART_AR[step.part])}</span>` : ""}</span>${who}</div>`;
+      ctxBar.innerHTML = `<div class="ctx-inner"><span class="ctx-part">${esc(L(step.part, PART_AR[step.part]))}</span>${who}</div>`;
       ctxBar.classList.toggle("has-who", !!who);
       ctxBar.hidden = false;
     }
@@ -2726,18 +2956,19 @@
       setTheme(step.theme);
       setProgress(i);
       document.body.classList.toggle("co-brand", step.kind === "intro");
+      document.body.classList.toggle("is-intro", step.kind === "intro");
       if (step.kind === "intro") return renderIntro();
+      redraw = () => { readStep(step); render(cur, false); };
 
-      let unitKey = "", unitKeyAr = "", unitVal = "", unitOf = "", unitOfAr = "";
+      let unitKey = "", unitVal = "", unitOf = "";
       if (step.scope === "unit") {
-        unitKey = "Unit"; unitKeyAr = "الوحدة"; unitVal = UNITS[step.unit].label;
-        if (step.count > 1) { unitOf = `${step.pos} of ${step.count}`; unitOfAr = `${step.pos} من ${step.count}`; }
+        unitKey = L("Unit", "الوحدة"); unitVal = unitLabel(UNITS[step.unit]);
+        if (step.count > 1) unitOf = L(`${step.pos} of ${step.count}`, `${step.pos} من ${step.count}`);
       } else if (step.scope === "community") {
-        unitKey = "Community"; unitKeyAr = "المجتمع"; unitVal = step.community; unitOf = step.sub; unitOfAr = step.subAr;
+        unitKey = L("Community", "المجتمع"); unitVal = commName(step.community); unitOf = L(step.sub, step.subAr);
       }
       hero.innerHTML = heroHtml({
-        eyebrow: step.part, eyebrowAr: PART_AR[step.part], title: step.title, titleAr: step.titleAr,
-        unitKey, unitKeyAr, unitVal, unitOf, unitOfAr, num: pad(i)
+        eyebrow: L(step.part, PART_AR[step.part]), title: L(step.title, step.titleAr), unitKey, unitVal, unitOf, num: pad(i)
       });
       setContext(step);
 
@@ -2768,30 +2999,31 @@
     function renderCheckpoint(sec) {
       const idx = SECTIONS.indexOf(sec);
       const upNext = SECTIONS[idx + 1];
+      redraw = () => renderCheckpoint(sec);
+      document.body.classList.remove("is-intro");
       setContext(null);
       updateProgress(100);
       hero.innerHTML = heroHtml({
-        eyebrow: `Section ${idx + 1} of ${SECTIONS.length} saved`, eyebrowAr: `تم حفظ القسم ${idx + 1} من ${SECTIONS.length}`,
-        title: "Section complete", titleAr: "اكتمل هذا القسم"
+        eyebrow: L(`Section ${idx + 1} of ${SECTIONS.length} saved`, `تم حفظ القسم ${idx + 1} من ${SECTIONS.length}`),
+        title: L("Section complete", "اكتمل هذا القسم")
       });
       const rows = SECTIONS.map(s => {
         const state = sent.has(s.id) ? "done" : s === upNext ? "next" : "todo";
         const m = secMinutes(s);
-        const en = state === "done" ? "Saved" : state === "next" ? `Up next · about ${m} min` : `About ${m} min`;
-        const ar = state === "done" ? "تم الحفظ" : state === "next" ? `التالي · ${minsAr(m)}` : minsAr(m);
+        const note = isAr()
+          ? (state === "done" ? "تم الحفظ" : state === "next" ? `التالي · ${minsAr(m)}` : minsAr(m))
+          : (state === "done" ? "Saved" : state === "next" ? `Up next · about ${m} min` : `About ${m} min`);
         const who = secWho(s);
         return `<li class="sec is-${state}"${state === "next" ? ' aria-current="step"' : ""}>
         <span class="sec-dot" aria-hidden="true"></span>
-        <span class="sec-en"><b>${esc(secName(s))}</b><small>${esc(en)}${who ? ` · ${esc(who)}` : ""}</small></span>
-        <span class="sec-ar" lang="ar"><b>${esc(secNameAr(s))}</b><small>${esc(ar)}</small></span>
+        <span class="sec-en"><b>${esc(L(secName(s), secNameAr(s)))}</b><small>${esc(note)}${who ? ` · <bdi>${esc(who)}</bdi>` : ""}</small></span>
       </li>`;
       }).join("");
       app.innerHTML = `<div class="panel checkpoint fade-in">
     <div class="state-icon ok"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
-    <p class="lead" role="status">Thank you. Your answers for ${esc(secName(sec))} have reached us.</p>
-    <p class="ar lead-ar" lang="ar">شكرًا لك. وصلتنا إجاباتك عن ${esc(secNameAr(sec))}.</p>
-    <p>You can finish here, or continue with the next section. Either way, what you have answered so far is already saved.</p>
-    <p class="ar" lang="ar">يمكنك الإنهاء هنا أو المتابعة إلى القسم التالي. في الحالتين، إجاباتك حتى الآن محفوظة لدينا.</p>
+    <p class="lead" role="status">${L(`Thank you. Your answers for ${esc(secName(sec))} have reached us.`, `شكرًا لك. وصلتنا إجاباتك عن ${esc(secNameAr(sec))}.`)}</p>
+    <p>${L("You can finish here, or continue with the next section. Either way, what you have answered so far is already saved.",
+      "يمكنك الإنهاء هنا أو المتابعة إلى القسم التالي. في الحالتين، إجاباتك حتى الآن محفوظة لدينا.")}</p>
     <ol class="sec-list">${rows}</ol>
     <div class="nav">
       <button type="button" class="btn ghost" id="finishBtn">${btnLabel("Finish here", "إنهاء هنا")}</button>
@@ -2804,43 +3036,62 @@
       app.focus({ preventScroll: true });
     }
 
+    /* Intro copy approved by Abby Turner (29 Oct 2026). */
+    const INTRO = {
+      en: [
+        "Thank you for being a valued member of the G Developments community.",
+        "Your experience matters to us. We invite you to share your feedback on your journey with G Developments, from the services you receive and the progress of your property to your overall community experience.",
+        "Your feedback will help us identify opportunities for improvement and continue delivering the quality of service you deserve.",
+        "We value your voice. Thank you for helping us shape a better experience."
+      ],
+      ar: [
+        "نشكرك على كونك جزءًا من مجتمع G Developments.",
+        "تجربتك تهمنا، ويسعدنا أن تشاركنا رأيك في رحلتك معنا، بدءًا من الخدمات المقدمة لك ومراحل تقدم وحدتك، وصولًا إلى تجربتك الشاملة داخل مجتمعك.",
+        "تساعدنا آراؤك وملاحظاتك على تحديد فرص التطوير والارتقاء بمستوى خدماتنا، لنواصل تقديم التجربة التي تستحقها.",
+        "رأيك يهمنا، وشكرًا لمساهمتك في تطوير تجربتك معنا."
+      ]
+    };
+
     function renderIntro() {
+      redraw = renderIntro;
       const handed = UNITS.some(u => u.stage === "handed");
+      const mins = handed ? 8 : 4, n = UNITS.length, secs = SECTIONS.length;
+      const name = CUSTOMER.name ? `<bdi>${esc(CUSTOMER.name)}</bdi>` : "";
       setContext(null);
-      hero.innerHTML = heroHtml({
-        eyebrow: "Customer Experience Survey 2026", eyebrowAr: "استبيان تجربة العملاء 2026",
-        title: CUSTOMER.name ? `Dear ${CUSTOMER.name},` : "Dear customer,",
-        titleAr: CUSTOMER.name ? `عزيزي ${CUSTOMER.name}،` : "عميلنا العزيز،"
-      });
+      hero.innerHTML = heroHtml({ title: L("Customer Experience Survey 2026", "استبيان تجربة العملاء 2026") });
+      const greeting = isAr() ? (name ? `عزيزي/عزيزتي ${name}،` : "عميلنا العزيز،") : (name ? `Dear ${name},` : "Dear customer,");
+      const facts = isAr()
+        ? [[mins, arCount(mins, "دقيقة تقريبًا", "دقيقتان تقريبًا", "دقائق تقريبًا", "دقيقة تقريبًا")],
+          [n, arCount(n, "وحدة مشمولة", "وحدتان مشمولتان", "وحدات مشمولة", "وحدة مشمولة")],
+          [secs, arCount(secs, "قسم للاستبيان", "قسمان للاستبيان", "أقسام للاستبيان", "قسمًا للاستبيان")]]
+        : [[`${mins} min`, "Estimated time"],
+          [n, n === 1 ? "Property included" : "Properties included"],
+          [secs, secs === 1 ? "Survey section" : "Survey sections"]];
       app.innerHTML = `<div class="panel fade-in">
-    <p>Thank you for being part of G Developments. We would like to hear how we are doing, from your account and your unit's progress to life in your community.</p>
-    <p class="ar" lang="ar">شكرًا لكونك جزءًا من G Developments. نود أن نعرف رأيك في أدائنا، بدءًا من حسابك ومراحل تنفيذ وحدتك وصولًا إلى الحياة في مجتمعك.</p>
-    <div class="facts">
-      <div><b>${handed ? "~8" : "~4"} min</b>to complete<span class="ar" lang="ar">${handed ? "8" : "4"} دقائق تقريبًا</span></div>
-      <div><b>${UNITS.length}</b>${UNITS.length === 1 ? "unit" : "units"} covered<span class="ar" lang="ar">${UNITS.length === 1 ? "وحدة واحدة" : `${UNITS.length} وحدات`}</span></div>
-      <div><b>${STEPS.length - 1}</b>short steps<span class="ar" lang="ar">${STEPS.length - 1} خطوة قصيرة</span></div>
-    </div>
-    <div class="units">${UNITS.map(u => `<div class="unit-card"><b>${esc(u.label)}</b><span class="pill ${u.stage}">${STAGE_LABEL[u.stage]} · <span lang="ar">${STAGE_AR[u.stage]}</span></span></div>`).join("")}</div>
-    <p class="muted">Your answers are linked to your unit${UNITS.length > 1 ? "s" : ""} so that we can follow up on anything that needs attention.</p>
-    <p class="muted ar" lang="ar">إجاباتك مرتبطة ${UNITS.length > 1 ? "بوحداتك" : "بوحدتك"} حتى نتمكن من متابعة أي أمر يحتاج إلى اهتمام.</p>
-    <p class="muted">The survey has ${SECTIONS.length} sections. Your answers are sent at the end of each one, so you can stop after any section or carry on.</p>
-    <p class="muted ar" lang="ar">يتكون الاستبيان من ${SECTIONS.length} أقسام. تُرسل إجاباتك في نهاية كل قسم، فيمكنك التوقف بعد أي قسم أو المتابعة.</p>
+    <p class="greeting">${greeting}</p>
+    <div class="intro-copy">${INTRO[LANG].map(t => `<p>${esc(t)}</p>`).join("")}</div>
+    <div class="facts">${facts.map(([v, k]) => `<div><b>${esc(v)}</b><span>${esc(k)}</span></div>`).join("")}</div>
+    <h2 class="next-title units-title">${L(n === 1 ? "Your property" : "Your properties", n === 1 ? "وحدتك" : "وحداتك")}</h2>
+    <div class="units">${UNITS.map(u => `<div class="unit-card"><b><bdi>${esc(unitLabel(u))}</bdi></b><span class="pill ${u.stage}">${L(STAGE_LABEL[u.stage], STAGE_AR[u.stage])}</span></div>`).join("")}</div>
+    <p class="muted">${L("Your answers are sent at the end of each section, so you can stop after any section or carry on.",
+      "تُرسل إجاباتك في نهاية كل قسم، فيمكنك التوقف بعد أي قسم أو المتابعة.")}</p>
     <div class="nav" style="justify-content:flex-end"><button class="btn" id="startBtn" type="button">${btnLabel("Start survey", "ابدأ الاستبيان")}<span class="arrow" aria-hidden="true">→</span></button></div>
   </div>`;
       document.getElementById("startBtn").addEventListener("click", () => render(1));
     }
 
     function renderState(kind) {
+      redraw = () => renderState(kind);
       setTheme("gd");
       document.body.classList.add("co-brand");
+      document.body.classList.remove("is-intro");
       stepCount.textContent = "";
       if (kind === "success") updateProgress(100);
       const titles = { success: "Thank you", error: "We couldn't send your answers", invalid: "This survey link isn't valid" };
       const titlesAr = { success: "شكرًا لك", error: "تعذر إرسال إجاباتك", invalid: "رابط الاستبيان غير صالح" };
       setContext(null);
       hero.innerHTML = heroHtml({
-        eyebrow: "Customer Experience Survey 2026", eyebrowAr: "استبيان تجربة العملاء 2026",
-        title: titles[kind], titleAr: titlesAr[kind]
+        eyebrow: L("Customer Experience Survey 2026", "استبيان تجربة العملاء 2026"), title: L(titles[kind], titlesAr[kind])
       });
       const icons = {
         ok: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>`,
@@ -2852,35 +3103,44 @@
       const doneN = SECTIONS.filter(s => sent.has(s.id)).length;
       /* The contact line only appears once A8 has been answered (an early finish can skip it). */
       const nextSteps = [
-        "Each team reviews the answers for its own area: your account, your unit and your community.",
-        answers.customer.A8 === "Yes" ? "You agreed to be contacted, so if anything needs attention a member of our team will reach out within 48 hours."
-          : answers.customer.A8 === "No" ? "You chose not to be contacted, so we won't follow up with you directly about these answers." : "",
-        "If you need to reach us in the meantime, quote your reference so we can find your answers."
+        L("Each team reviews the answers for its own area: your account, your unit and your community.",
+          "يراجع كل فريق الإجابات الخاصة بمجاله: حسابك ووحدتك ومجتمعك."),
+        answers.customer.A8 === "Yes" ? L("You agreed to be contacted, so if anything needs attention a member of our team will reach out within 48 hours.",
+          "وافقت على التواصل معك، لذلك إذا احتاج أي أمر إلى متابعة سيتواصل معك أحد أعضاء فريقنا خلال 48 ساعة.")
+          : answers.customer.A8 === "No" ? L("You chose not to be contacted, so we won't follow up with you directly about these answers.",
+            "اخترت عدم التواصل معك، لذلك لن نتواصل معك مباشرةً بخصوص هذه الإجابات.") : "",
+        L("If you need to reach us in the meantime, quote your reference so we can find your answers.",
+          "إذا احتجت إلى التواصل معنا في هذه الأثناء، اذكر رقمك المرجعي حتى نتمكن من الوصول إلى إجاباتك.")
       ].filter(Boolean);
+      const nUnits = UNITS ? UNITS.length : 0;
+      const unitsLabel = isAr()
+        ? arCount(nUnits, "وحدة", "وحدتان", "وحدات", "وحدة") + (comms ? ` · ${comms} ${arCount(comms, "مجتمع", "مجتمعان", "مجتمعات", "مجتمعًا")}` : "")
+        : (nUnits === 1 ? "unit" : "units") + (comms ? ` · ${comms} ${comms === 1 ? "community" : "communities"}` : "");
       const views = {
         success: `<div class="state-icon ok">${icons.ok}</div>
-      ${endedEarly
-          ? `<p class="lead">Thank you for your time. Your answers for ${doneN} of ${SECTIONS.length} sections have been received. They go directly to the teams responsible for each part of your experience.</p>
-      <p class="ar lead-ar" lang="ar">شكرًا لوقتك. وصلتنا إجاباتك عن ${doneN} من ${SECTIONS.length} أقسام، وستصل مباشرةً إلى الفرق المسؤولة عن كل جزء من تجربتك.</p>`
-          : `<p class="lead">Your answers have been received. They go directly to the teams responsible for each part of your experience.</p>
-      <p class="ar lead-ar" lang="ar">تم استلام إجاباتك، وستصل مباشرةً إلى الفرق المسؤولة عن كل جزء من تجربتك. شكرًا لوقتك.</p>`}
+      <p class="lead">${endedEarly
+          ? L(`Thank you for your time. Your answers for ${doneN} of ${SECTIONS.length} sections have been received. They go directly to the teams responsible for each part of your experience.`,
+            `شكرًا لوقتك. وصلتنا إجاباتك عن ${doneN} من ${SECTIONS.length} أقسام، وستصل مباشرةً إلى الفرق المسؤولة عن كل جزء من تجربتك.`)
+          : L("Your answers have been received. They go directly to the teams responsible for each part of your experience.",
+            "تم استلام إجاباتك، وستصل مباشرةً إلى الفرق المسؤولة عن كل جزء من تجربتك. شكرًا لوقتك.")}</p>
       <div class="facts">
-        <div><b>${count || "—"}</b>answers recorded</div>
-        <div><b>${UNITS ? UNITS.length : "—"}</b>${UNITS && UNITS.length === 1 ? "unit" : "units"}${comms ? ` · ${comms} ${comms === 1 ? "community" : "communities"}` : ""}</div>
-        <div><b class="ref">${esc(REF || "—")}</b>your reference</div>
+        <div><b>${count || "—"}</b>${L("answers recorded", "الإجابات المسجلة")}</div>
+        <div><b>${nUnits || "—"}</b>${unitsLabel}</div>
+        <div><b class="ref"><bdi>${esc(REF || "—")}</bdi></b>${L("your reference", "رقمك المرجعي")}</div>
       </div>
-      <h2 class="next-title">What happens next</h2>
+      <h2 class="next-title">${L("What happens next", "الخطوات التالية")}</h2>
       <ol class="next-steps">${nextSteps.map((t, n) => `<li><span>${pad(n + 1)}</span>${t}</li>`).join("")}</ol>
-      <p class="muted">You can now close this page.</p>`,
+      <p class="muted">${L("You can now close this page.", "يمكنك الآن إغلاق هذه الصفحة.")}</p>`,
         error: `<div class="state-icon err">${icons.err}</div>
-      <p class="lead">Something went wrong on our side. Your answers are still on this page, so nothing is lost.</p>
-      <p class="ar lead-ar" lang="ar">حدث خطأ من جانبنا. إجاباتك لا تزال محفوظة في هذه الصفحة، يرجى المحاولة مرة أخرى.</p>
-      <div class="err-box">Check your internet connection, then press <b>Try again</b>. If it keeps failing, keep this page open and try again in a few minutes.</div>
-      <div class="nav" style="justify-content:flex-start"><button class="btn" id="retryBtn" type="button">Try again</button>
-      <button class="btn ghost" id="reviewBtn" type="button">Review answers</button></div>`,
+      <p class="lead">${L("Something went wrong on our side. Your answers are still on this page, so nothing is lost.",
+        "حدث خطأ من جانبنا. إجاباتك لا تزال محفوظة في هذه الصفحة، يرجى المحاولة مرة أخرى.")}</p>
+      <div class="err-box">${L("Check your internet connection, then press <b>Try again</b>. If it keeps failing, keep this page open and try again in a few minutes.",
+        "تحقق من اتصالك بالإنترنت، ثم اضغط <b>حاول مرة أخرى</b>. إذا استمرت المشكلة، اترك هذه الصفحة مفتوحة وحاول مرة أخرى بعد بضع دقائق.")}</div>
+      <div class="nav" style="justify-content:flex-start"><button class="btn" id="retryBtn" type="button">${btnLabel("Try again", "حاول مرة أخرى")}</button>
+      <button class="btn ghost" id="reviewBtn" type="button">${btnLabel("Review answers", "مراجعة الإجابات")}</button></div>`,
         invalid: `<div class="state-icon err">${icons.err}</div>
-      <p>The link may be incomplete or out of date. Please open the survey from the original email or WhatsApp message.</p>
-      <p class="ar" lang="ar">قد يكون الرابط غير مكتمل أو منتهي الصلاحية. يرجى فتح الاستبيان من رسالة البريد الإلكتروني أو واتساب الأصلية.</p>`
+      <p>${L("The link may be incomplete or out of date. Please open the survey from the original email or WhatsApp message.",
+        "قد يكون الرابط غير مكتمل أو منتهي الصلاحية. يرجى فتح الاستبيان من رسالة البريد الإلكتروني أو واتساب الأصلية.")}</p>`
       };
       app.innerHTML = `<div class="panel fade-in" role="${kind === "error" ? "alert" : "status"}">${views[kind]}</div>`;
       window.scrollTo({ top: 0 });
