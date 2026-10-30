@@ -1944,15 +1944,16 @@
     };
 
     /* ===================== QUESTION BANK (from the consolidated design) =====================
-       Updated to Karim's per-community sheets (Playa / Seashell, 20 Oct 2026): E1 and E2 list
-       different items for each community (itemsBy); every other question is shared. */
-    const SAT = { en: ["Very dissatisfied", "Completely satisfied"], ar: ["غير راضٍ على الإطلاق", "راضٍ تمامًا"] };
+       Updated to the 28 Oct 2026 design (Unified Design 1.1): E1 and E2 list different items for
+       each community (itemsBy); every other question is shared. Part B is asked once per customer. */
+    const SAT = { en: ["Very dissatisfied", "Very satisfied"], ar: ["غير راضٍ على الإطلاق", "راضٍ جدًا"] };
     const NA_LABEL = { en: "Not applicable / didn't use", ar: "لا ينطبق / لم أستخدمها" };
     const BEACH_SHARED = [
       { id: "E1.1", en: "Cleanliness", ar: "النظافة" },
       { id: "E1.2", en: "Furniture and facilities", ar: "الأثاث والمرافق" },
-      { id: "E1.3", en: "Lifeguards", ar: "المنقذون" },
-      { id: "E1.4", en: "Beach staff service", ar: "خدمة فريق الشاطئ" }
+      { id: "E1.3", en: "Lifeguards", ar: "منقذو الشاطئ" },
+      { id: "E1.4", en: "Beach staff service", ar: "خدمة فريق الشاطئ" },
+      { id: "E1.5", en: "Beachfront commercial area", ar: "المنطقة التجارية المواجهة للشاطئ" }
     ];
 
     const Q = {
@@ -1967,12 +1968,12 @@
       },
       A3: {
         type: "rating", anchors: { en: ["Very difficult", "Very easy"], ar: ["صعب جدًا", "سهل جدًا"] },
-        en: "How easy is it to get your requests and inquiries resolved with us?",
-        ar: "ما مدى سهولة إنهاء طلباتك واستفساراتك معنا؟"
+        en: "How easy has it been to get your requests and inquiries resolved with us?",
+        ar: "ما مدى سهولة حل طلباتك واستفساراتك من خلالنا؟"
       },
       A4: {
         type: "rating", en: "How satisfied are you with how quickly our teams respond to your requests and inquiries?",
-        ar: "ما مدى رضاك عن سرعة استجابة فرقنا لطلباتك واستفساراتك؟"
+        ar: "ما مدى رضاك عن سرعة استجابة فريق العمل لطلباتك واستفساراتك؟"
       },
       A5: {
         type: "rating", en: "How satisfied are you with the clarity of the information and updates we share with you?",
@@ -1985,8 +1986,8 @@
       },
       A7: {
         type: "text", optional: true,
-        en: "What is the one most important thing we could improve for you as a customer?",
-        ar: "ما أهم شيء واحد يمكننا تحسينه لتحسين تجربتك كعميل؟"
+        en: "What suggestions do you have to help us improve your overall experience with G Developments?",
+        ar: "ما المقترحات التي لديك لمساعدتنا على تحسين تجربتك العامة مع G Developments؟"
       },
       A8: {
         type: "yesno", en: "May a member of our team contact you about your answers?",
@@ -2000,8 +2001,8 @@
           { id: "B1.1", en: "Accuracy of your account statements and payment schedule", ar: "دقة كشوف الحساب وجدول السداد" },
           { id: "B1.2", en: "Ease of making payments", ar: "سهولة سداد الأقساط" },
           {
-            id: "B1.3", en: "Handling of your contract and document requests (e.g., resale or transfer)",
-            ar: "التعامل مع طلباتك الخاصة بالعقد والمستندات (مثل إعادة البيع أو التنازل)"
+            id: "B1.3", en: "Handling of your contract and document requests (resale or transfer)",
+            ar: "التعامل مع طلباتك الخاصة بالعقد والمستندات (إعادة البيع أو التنازل)"
           }
         ]
       },
@@ -2009,6 +2010,10 @@
         type: "multi", en: "How would you prefer to receive updates from us?",
         ar: "كيف تفضل أن تصلك التحديثات منا؟", hint: "Select all that apply.",
         options: ["App", "WhatsApp", "Email", "SMS", "Phone call", "Site visit"]
+      },
+      B3: {
+        type: "rating", en: "How satisfied are you with the communication, responsiveness and support provided by the Customer Excellence team?",
+        ar: "ما مدى رضاك عن التواصل وسرعة الاستجابة والدعم المقدم من فريق خدمة العملاء؟"
       },
 
       /* ---- Part C: Pre-handover ---- */
@@ -2049,7 +2054,7 @@
       },
       D4: {
         type: "rating", en: "How satisfied were you with the speed of response and support from the Customer Excellence team during your handover?",
-        ar: "ما مدى رضاك عن سرعة الاستجابة والدعم المقدم من فريق خدمة العملاء خلال استلام وحدتك؟"
+        ar: "ما مدى رضاك عن سرعة الاستجابة والدعم المقدم من فريق التميز في خدمة العملاء خلال استلام وحدتك؟"
       },
       D5: {
         type: "rating", anchors: { en: ["Not at all", "Fully"], ar: ["لا على الإطلاق", "بالكامل"] },
@@ -2057,24 +2062,22 @@
         ar: "عند الاستلام، إلى أي مدى تطابقت وحدتك مع المواصفات والتشطيبات المتفق عليها؟"
       },
       D6: {
-        type: "single", en: "Roughly how many defects or snags did you find at handover?",
-        ar: "تقريبًا، كم عدد الملاحظات أو العيوب التي وجدتها عند الاستلام؟",
-        options: ["None", "1–5", "6–15", "More than 15"]
+        type: "rating", en: "How satisfied were you with the overall condition and readiness of your unit at handover?",
+        ar: "ما مدى رضاك عن الحالة العامة لوحدتك ومدى جاهزيتها عند الاستلام؟"
       },
       D7: {
-        type: "rating", showIf: a => a.D6 && a.D6 !== "None",
-        en: "How satisfied are you with how quickly and completely those defects were fixed?",
-        ar: "ما مدى رضاك عن سرعة واكتمال إصلاح هذه العيوب؟"
+        type: "rating", en: "How satisfied were you with the support and follow-up provided after your unit handover?",
+        ar: "ما مدى رضاك عن الدعم والمتابعة المقدمة لك بعد استلام وحدتك؟"
       },
       D8: {
-        type: "yesno", showIf: a => a.D6 && a.D6 !== "None",
-        en: "Is any defect from handover still not fixed?", ar: "هل ما زال هناك أي عيب من وقت الاستلام لم يتم إصلاحه؟",
+        type: "yesno", en: "Are there any outstanding issues from your unit handover that you would like us to follow up on?",
+        ar: "هل توجد أي ملاحظات تتعلق باستلام وحدتك، وترغب في أن نتابعها معك؟",
         follow: { when: "Yes", key: "D8_detail", label: "Please describe it briefly.", required: true }
       },
       D9: {
         type: "text", optional: true,
-        en: "What is the most important improvement you would recommend for unit readiness and the handover journey?",
-        ar: "ما هو أهم تحسين تقترحه فيما يتعلق بجاهزية الوحدة ورحلة الاستلام؟"
+        en: "Do you have any suggestions for improving the unit handover experience?",
+        ar: "هل لديك أي مقترحات لتحسين تجربة استلام وحدتك؟"
       },
 
       /* ---- Part E: Community ([Community] replaced at render time) ---- */
@@ -2083,42 +2086,42 @@
         itemsBy: {
           Playa: [
             ...BEACH_SHARED,
-            { id: "E1.5", en: "Commercial outlets", ar: "الأماكن التجارية" }
+            { id: "E1.6", en: "Main spine commercial area", ar: "المنطقة التجارية الرئيسية" },
+            { id: "E1.7", en: "Your overall experience at Playa Strip", ar: "تجربتك بشكل عام في بلايا ستريب" }
           ],
           Seashell: [
             ...BEACH_SHARED,
-            { id: "E1.5", en: "Beachfront commercial area", ar: "المنطقة التجارية المواجهة للشاطئ" },
-            { id: "E1.6", en: "Internal commercial area, including the sports court and kids' area", ar: "المنطقة التجارية الداخلية، بما فيها الملعب الرياضي ومنطقة الأطفال" },
-            { id: "E1.7", en: "Seashell Walk", ar: "سي شل ووك" }
+            { id: "E1.6", en: "Internal commercial area, including the sports courts and kids' area", ar: "المنطقة التجارية الداخلية، بما فيها الملاعب الرياضية ومنطقة الأطفال" },
+            { id: "E1.7", en: "Seashell Walk", ar: "ممشى سيشيل" }
           ]
         }
       },
       E2: {
-        type: "matrix", na: true, en: "How satisfied are you with the swimmable zones (pools or lagoons)?",
+        type: "matrix", na: true, en: "How satisfied are you with the pools and lagoons?",
         ar: "ما مدى رضاك عن كل مما يلي في حمامات السباحة واللاجون؟",
         itemsBy: {
           Playa: [
-            { id: "E2.1", en: "Sand cleanliness and quality", ar: "نظافة حول البحيرات وجودتها" },
-            { id: "E2.2", en: "Lagoon cleanliness and water quality", ar: "نظافة اللاجون وجودة مياهه" },
-            { id: "E2.3", en: "Fountain cleanliness", ar: "نظافة النوافير" }
+            { id: "E2.1", en: "Lagoons cleanliness and water quality", ar: "نظافة البحيرات وجودة مياهها" },
+            { id: "E2.2", en: "Swimmable lagoon cleanliness and water quality", ar: "نظافة اللاجون المخصص للسباحة وجودة مياهه" },
+            { id: "E2.3", en: "Fountains cleanliness", ar: "نظافة النوافير" }
           ],
           Seashell: [
-            { id: "E2.1", en: "Sand cleanliness and quality", ar: "نظافة حول البحيرات وجودتها" },
-            { id: "E2.2", en: "Lifeguards", ar: "المنقذون" },
-            { id: "E2.3", en: "Swimmable lagoon or pools cleanliness and water quality", ar: "نظافة اللاجون و الحمامات المخصص للسباحة وجودة مياهه" },
+            { id: "E2.1", en: "Pool cleanliness and water quality", ar: "نظافة حمامات السباحة وجودة المياه" },
+            { id: "E2.2", en: "Pool lifeguards", ar: "المنقذون في حمامات السباحة" },
+            { id: "E2.3", en: "Swimmable lagoon cleanliness and water quality", ar: "نظافة اللاجون المخصص للسباحة وجودة مياهه" },
             { id: "E2.4", en: "Non-swimmable lagoon cleanliness", ar: "نظافة اللاجون غير المخصص للسباحة" }
           ]
         }
       },
       E3: {
         type: "matrix", na: true, en: "How satisfied are you with security, traffic and parking?",
-        ar: "ما مدى رضاك عن كل مما يلي في الأمن والمرور والانتظار؟",
+        ar: "ما مدى رضاك عن كل مما يلي في الأمن والمرور وأماكن انتظار السيارات؟",
         items: [
           { id: "E3.1", en: "Entry at the main gate", ar: "الدخول من البوابة الرئيسية" },
           { id: "E3.2", en: "Security presence inside [Community]", ar: "تواجد الأمن داخل [Community]" },
           { id: "E3.3", en: "How security responds to incidents", ar: "استجابة الأمن للمواقف والمشكلات" },
-          { id: "E3.4", en: "Traffic", ar: "حركة المرور داخل المشروع" },
-          { id: "E3.5", en: "Parking", ar: "خدمة الانتظار" }
+          { id: "E3.4", en: "Traffic and parking in residential areas", ar: "المرور وأماكن انتظار السيارات في المناطق السكنية" },
+          { id: "E3.5", en: "Traffic and parking at the beach", ar: "المرور وأماكن انتظار السيارات عند الشاطئ" }
         ]
       },
       E4: {
@@ -2136,7 +2139,7 @@
         items: [
           { id: "E5.1", en: "Response time", ar: "سرعة الاستجابة" },
           { id: "E5.2", en: "Quality of the fix or answer", ar: "جودة الحل أو الرد" },
-          { id: "E5.3", en: "Follow-up on the request or complaint", ar: "متابعة الطلب أو الشكوى المقدمة" }
+          { id: "E5.3", en: "Follow-up on the request or complaint", ar: "متابعة الطلب أو الشكوى" }
         ]
       },
       E6: {
@@ -2153,7 +2156,7 @@
       },
       E9: {
         type: "multi", en: "Which areas should we improve for Summer 2027?",
-        ar: "ما المجالات التي تفضل أن نبدأ بتحسينها في صيف 2027؟", hint: "Select all that apply.",
+        ar: "ما المجالات التي يجب أن نبدأ بتحسينها في صيف 2027؟", hint: "Select all that apply.",
         options: ["Beach", "Pools & lagoons", "Security & traffic", "Facilities", "Operations team", "App", "Other"],
         follow: { when: "Other", key: "E9_other", label: "Please specify.", required: false }
       }
@@ -2184,12 +2187,12 @@
     const COMMUNITY_AR = { Playa: "بلايا", Seashell: "سي شل" };
     const STAGE_AR = { pre: "في انتظار الاستلام", handed: "تم الاستلام" };
     const PART_AR = {
-      "Part A · Your experience": "الجزء أ · تجربتك",
-      "Part B · Your account": "الجزء ب · حسابك",
-      "Part C · Before handover": "الجزء ج · قبل الاستلام",
-      "Part D · Your handover": "الجزء د · استلام وحدتك",
-      "Part E · Your community": "الجزء هـ · مجتمعك",
-      "Closing": "الختام"
+      "Part A · Your overall experience with G Developments": "الجزء أ · تجربتك العامة مع G Developments",
+      "Part B · Customer Excellence & account services": "الجزء ب · التميز في خدمة العملاء وخدمات الحساب",
+      "Part C · Your journey before handover": "الجزء ج · رحلتك قبل الاستلام",
+      "Part D · Your unit handover experience": "الجزء د · تجربة استلام وحدتك",
+      "Part E · Your community experience": "الجزء هـ · تجربتك في مجتمعك",
+      "Your feedback & suggestions": "آراؤك ومقترحاتك"
     };
 
     /* ===================== LINK PARSING ===================== */
@@ -2262,27 +2265,25 @@
     function buildSteps(units) {
       const s = [{ kind: "intro", theme: "gd" }];
       s.push({
-        kind: "q", theme: "gd", scope: "customer", part: "Part A · Your experience",
+        kind: "q", theme: "gd", scope: "customer", part: "Part A · Your overall experience with G Developments",
         title: "Your experience with G Developments", titleAr: "تجربتك مع G Developments", qs: ["A1", "A2", "A3", "A4", "A5", "A6"]
       });
-      /* Follows the consolidated design: B1 (per unit), then B2 (once), then C/D (per unit). */
-      units.forEach((u, i) => {
-        answers.units[i] = {};
-        s.push({
-          kind: "q", theme: "gd", scope: "unit", unit: i, part: "Part B · Your account",
-          title: "Your account", titleAr: "حسابك", qs: ["B1"]
-        });
+      /* Part B is asked once per customer, however many units they hold (28 Oct design). */
+      units.forEach((u, i) => { answers.units[i] = {}; });
+      s.push({
+        kind: "q", theme: "gd", scope: "customer", part: "Part B · Customer Excellence & account services",
+        title: "Your account", titleAr: "حسابك", qs: ["B1"]
       });
       s.push({
-        kind: "q", theme: "gd", scope: "customer", part: "Part B · Your account",
-        title: "How you hear from us", titleAr: "كيف نتواصل معك", qs: ["B2"]
+        kind: "q", theme: "gd", scope: "customer", part: "Part B · Customer Excellence & account services",
+        title: "Staying in touch", titleAr: "التواصل معك", qs: ["B2", "B3"]
       });
 
       /* Units awaiting handover first (Part C), then handed-over units (Part D), so each Part is one section. */
       units.forEach((u, i) => {
         if (u.stage === "pre") {
           s.push({
-            kind: "q", theme: "gd", scope: "unit", unit: i, part: "Part C · Before handover",
+            kind: "q", theme: "gd", scope: "unit", unit: i, part: "Part C · Your journey before handover",
             title: "Construction and delivery", titleAr: "الإنشاءات والتسليم", qs: ["C1", "C2", "C3"]
           });
         }
@@ -2290,7 +2291,7 @@
       units.forEach((u, i) => {
         if (u.stage === "handed") {
           s.push({
-            kind: "q", theme: "gd", scope: "unit", unit: i, part: "Part D · Your handover",
+            kind: "q", theme: "gd", scope: "unit", unit: i, part: "Part D · Your unit handover experience",
             title: "Looking back at your handover", titleAr: "نظرة على استلام وحدتك", qs: ["D0", "D1", "D2", "D3", "D4", "D5", "D6", "D7", "D8", "D9"],
             note: "Before handover, at handover and after it, in that order."
           });
@@ -2308,12 +2309,12 @@
         const forAllAr = owned === 2 ? " لكلتا وحدتيك هناك" : owned > 2 ? " لكل وحداتك هناك" : "";
         const note = `These questions are about ${c} as a whole, so you answer them once${forAll}.`;
         const noteAr = `هذه الأسئلة عن ${cAr} ككل، لذلك تجيب عنها مرة واحدة${forAllAr}.`;
-        s.push({ ...base, part: "Part E · Your community", title: `Life in ${c}`, titleAr: `الحياة في ${cAr}`, sub: "Page 1 of 3", subAr: "صفحة 1 من 3", qs: ["E1", "E2", "E3", "E4"], handoff: ci === 0, note, noteAr });
-        s.push({ ...base, part: "Part E · Your community", title: `Service in ${c}`, titleAr: `الخدمة في ${cAr}`, sub: "Page 2 of 3", subAr: "صفحة 2 من 3", qs: ["E5", "E6", "E7"] });
-        s.push({ ...base, part: "Part E · Your community", title: `Your ${c} summer`, titleAr: `صيفك في ${cAr}`, sub: "Page 3 of 3", subAr: "صفحة 3 من 3", qs: ["E8", "E9"] });
+        s.push({ ...base, part: "Part E · Your community experience", title: `Life in ${c}`, titleAr: `الحياة في ${cAr}`, sub: "Page 1 of 3", subAr: "صفحة 1 من 3", qs: ["E1", "E2", "E3", "E4"], handoff: ci === 0, note, noteAr });
+        s.push({ ...base, part: "Part E · Your community experience", title: `Service in ${c}`, titleAr: `الخدمة في ${cAr}`, sub: "Page 2 of 3", subAr: "صفحة 2 من 3", qs: ["E5", "E6", "E7"] });
+        s.push({ ...base, part: "Part E · Your community experience", title: `Your ${c} summer`, titleAr: `صيفك في ${cAr}`, sub: "Page 3 of 3", subAr: "صفحة 3 من 3", qs: ["E8", "E9"] });
       });
 
-      s.push({ kind: "q", theme: "gd", scope: "customer", part: "Closing", title: "Before you go", titleAr: "قبل أن تغادر", qs: ["A7", "A8"] });
+      s.push({ kind: "q", theme: "gd", scope: "customer", part: "Your feedback & suggestions", title: "Before you go", titleAr: "قبل أن تغادر", qs: ["A7", "A8"] });
 
       /* "Unit 1 of 2" counts only the units that Part covers (Part D skips units awaiting handover). */
       const byPart = {};
@@ -2343,7 +2344,7 @@
         }
         const letter = (/^Part ([A-E])/.exec(s.part) || [])[1];
         out.push({
-          key, id: (letter || s.part) + (s.community ? ":" + s.community : ""), part: s.part,
+          key, id: (letter || "Closing") + (s.community ? ":" + s.community : ""), part: s.part,
           community: s.community || null, from: i, to: i, units: new Set(s.scope === "unit" ? [s.unit] : [])
         });
       });
@@ -2728,6 +2729,8 @@
       if (!REF) REF = "CX26-" + Math.random().toString(36).slice(2, 8).toUpperCase();
       return {
         survey: "CX-2026",
+        questionSet: "2026-10-28",  // version of the question bank (Unified Design 1.1)
+        lang: LANG,                // language the customer answered in: "en" or "ar"
         ref: REF,
         status,                    // "partial" (end of a section) or "complete" (the customer finished)
         endedEarly: early,
