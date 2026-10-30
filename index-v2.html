@@ -861,13 +861,102 @@
       margin-bottom: 4px;
     }
 
-    /* nav */
+    /* nav: the buttons stay in reach. The row pins to the bottom of the screen while its
+       page or card is in view, and settles in place at the end. */
     .nav {
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 12px;
-      margin-top: 30px;
+      position: sticky;
+      bottom: 0;
+      z-index: 20;
+      margin: 30px -24px 0;
+      padding: 14px 24px calc(14px + env(safe-area-inset-bottom));
+      background: var(--page);
+      border-top: 1px solid var(--line);
+    }
+
+    .panel .nav {
+      margin: 30px -32px -32px;
+      padding-left: 32px;
+      padding-right: 32px;
+      background: var(--surface);
+      border-radius: 0 0 var(--card-radius) var(--card-radius);
+    }
+
+    /* Pinned over more content: fade the content into the bar and lift it with a shadow */
+    .nav::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 100%;
+      height: 40px;
+      background: linear-gradient(to bottom, transparent, var(--page));
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s ease;
+    }
+
+    .panel .nav::before {
+      background: linear-gradient(to bottom, transparent, var(--surface));
+    }
+
+    .nav.is-pinned {
+      border-radius: 0;
+      box-shadow: 0 -12px 28px -10px rgba(0, 0, 0, .22);
+    }
+
+    .nav.is-pinned::before {
+      opacity: 1;
+    }
+
+    /* "More below ↓" floats just above the pinned bar; tapping it scrolls on */
+    .more-below {
+      position: absolute;
+      left: 50%;
+      bottom: calc(100% + 12px);
+      transform: translate(-50%, 6px);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      height: 32px;
+      padding: 0 14px;
+      border: 1px solid var(--line-strong);
+      border-radius: 999px;
+      background: var(--surface);
+      color: var(--ink);
+      font: inherit;
+      font-size: 13px;
+      white-space: nowrap;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, .1);
+      cursor: pointer;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity .2s ease, transform .2s ease, visibility .2s;
+    }
+
+    .more-below span {
+      animation: nudge 1.6s ease-in-out infinite;
+    }
+
+    @keyframes nudge {
+      50% {
+        transform: translateY(2px);
+      }
+    }
+
+    .nav.is-pinned .more-below {
+      opacity: 1;
+      visibility: visible;
+      transform: translate(-50%, 0);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .more-below span {
+        animation: none;
+      }
     }
 
     .btn {
@@ -917,6 +1006,18 @@
       color: var(--ink);
       border-color: var(--line-strong);
       min-width: 0;
+    }
+
+    /* Secondary way out ("Finish here"): an underlined text link, not a pill */
+    .btn.link {
+      background: transparent;
+      color: var(--ink);
+      border-color: transparent;
+      min-width: 0;
+      padding: 0 4px;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      text-decoration-thickness: 1px;
     }
 
     .spinner {
@@ -991,14 +1092,23 @@
       justify-content: space-between;
       align-items: center;
       gap: 12px;
-      flex-wrap: wrap;
       padding: 14px 18px;
       border: 1px solid var(--line);
       border-radius: var(--card-radius);
     }
 
+    /* The status stays on the right; a long unit name wraps instead, between community and unit code */
     .unit-card b {
+      min-width: 0;
       font-weight: 500;
+    }
+
+    .unit-card b span {
+      white-space: nowrap;
+    }
+
+    .unit-card .pill {
+      flex: none;
     }
 
     .pill {
@@ -1300,6 +1410,21 @@
       .btn {
         min-width: 0;
         padding: 0 24px;
+      }
+
+      .nav {
+        margin: 24px -16px 0;
+        padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+      }
+
+      .panel .nav {
+        margin: 24px -18px -24px;
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+
+      .nav .btn:not(.ghost):not(.link) {
+        flex: 1 1 auto;
       }
 
       .gd-logo {
@@ -1729,20 +1854,46 @@
       justify-self: end;
     }
 
-    @media (max-width: 400px) {
+    /* Phones: no room to centre the logos, so they sit at the start and shrink with the screen,
+       leaving the switch whole down to 320px */
+    @media (max-width: 560px) {
+      body.co-brand .topbar-inner {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      body.co-brand .topbar-inner::before {
+        content: none;
+      }
+
+      body.co-brand .brand {
+        justify-content: flex-start;
+        min-width: 0;
+      }
 
       body.co-brand .gd-logo,
       body.co-brand .gc-logo {
-        width: 100px;
+        width: clamp(76px, 25vw, 124px);
+        min-width: 0;
       }
 
       body.co-brand .logo-sep {
-        margin: 0 12px;
+        height: 24px;
+        margin: 0 clamp(8px, 3vw, 18px);
+      }
+    }
+
+    @media (max-width: 400px) {
+      .lang-switch button {
+        height: 30px;
+        min-width: 36px;
+        padding: 0 8px;
       }
 
-      .lang-switch button {
-        min-width: 38px;
-        padding: 0 9px;
+      /* The bar under the header already shows the section's progress */
+      .step-count .pct {
+        display: none;
       }
     }
 
@@ -2272,11 +2423,7 @@
       units.forEach((u, i) => { answers.units[i] = {}; });
       s.push({
         kind: "q", theme: "gd", scope: "customer", part: "Part B · Customer Excellence & account services",
-        title: "Your account", titleAr: "حسابك", qs: ["B1"]
-      });
-      s.push({
-        kind: "q", theme: "gd", scope: "customer", part: "Part B · Customer Excellence & account services",
-        title: "Staying in touch", titleAr: "التواصل معك", qs: ["B2", "B3"]
+        title: "Your account and staying in touch", titleAr: "حسابك والتواصل معك", qs: ["B1", "B2", "B3"]
       });
 
       /* Units awaiting handover first (Part C), then handed-over units (Part D), so each Part is one section. */
@@ -2953,6 +3100,26 @@
       document.body.classList.add("hero-out");
     }
 
+    /* Bottom bar: while it is pinned over content that continues below, it gets a fade and a
+       shadow, so it does not read as the end of the page. At rest (end of page or card) it is flat. */
+    function markPinnedNav() {
+      const nav = document.querySelector("#app .nav");
+      if (!nav) return;
+      nav.classList.toggle("is-pinned", nav.parentElement.getBoundingClientRect().bottom > innerHeight + 2);
+      if (!nav.querySelector(".more-below")) {
+        const more = document.createElement("button");
+        more.type = "button";
+        more.className = "more-below";
+        more.innerHTML = `${esc(L("More below", "المزيد بالأسفل"))}<span aria-hidden="true">↓</span>`;
+        more.addEventListener("click", () => scrollBy({ top: innerHeight * 0.6, behavior: "smooth" }));
+        nav.prepend(more);
+      }
+    }
+    addEventListener("scroll", markPinnedNav, { passive: true });
+    addEventListener("resize", markPinnedNav);
+    document.addEventListener("animationend", markPinnedNav);
+    new MutationObserver(markPinnedNav).observe(document.getElementById("app"), { childList: true, subtree: true });
+
     function render(i, focusTop = true) {
       cur = i;
       const step = STEPS[i];
@@ -3029,7 +3196,7 @@
       "يمكنك الإنهاء هنا أو المتابعة إلى القسم التالي. في الحالتين، إجاباتك حتى الآن محفوظة لدينا.")}</p>
     <ol class="sec-list">${rows}</ol>
     <div class="nav">
-      <button type="button" class="btn ghost" id="finishBtn">${btnLabel("Finish here", "إنهاء هنا")}</button>
+      <button type="button" class="btn link" id="finishBtn">${btnLabel("Finish here", "إنهاء هنا")}</button>
       <button type="button" class="btn" id="continueBtn">${btnLabel("Continue", "متابعة")}<span class="arrow" aria-hidden="true">→</span></button>
     </div>
   </div>`;
@@ -3075,7 +3242,7 @@
     <div class="intro-copy">${INTRO[LANG].map(t => `<p>${esc(t)}</p>`).join("")}</div>
     <div class="facts">${facts.map(([v, k]) => `<div><b>${esc(v)}</b><span>${esc(k)}</span></div>`).join("")}</div>
     <h2 class="next-title units-title">${L(n === 1 ? "Your property" : "Your properties", n === 1 ? "وحدتك" : "وحداتك")}</h2>
-    <div class="units">${UNITS.map(u => `<div class="unit-card"><b><bdi>${esc(unitLabel(u))}</bdi></b><span class="pill ${u.stage}">${L(STAGE_LABEL[u.stage], STAGE_AR[u.stage])}</span></div>`).join("")}</div>
+    <div class="units">${UNITS.map(u => `<div class="unit-card"><b><bdi>${unitLabel(u).split(" · ").map(p => `<span>${esc(p)}</span>`).join(" · ")}</bdi></b><span class="pill ${u.stage}">${L(STAGE_LABEL[u.stage], STAGE_AR[u.stage])}</span></div>`).join("")}</div>
     <p class="muted">${L("Your answers are sent at the end of each section, so you can stop after any section or carry on.",
       "تُرسل إجاباتك في نهاية كل قسم، فيمكنك التوقف بعد أي قسم أو المتابعة.")}</p>
     <div class="nav" style="justify-content:flex-end"><button class="btn" id="startBtn" type="button">${btnLabel("Start survey", "ابدأ الاستبيان")}<span class="arrow" aria-hidden="true">→</span></button></div>
