@@ -1893,44 +1893,6 @@
 
     /* ---------- v2 additions ---------- */
 
-    /* G Communities welcome (first community page) */
-    .gc-welcome {
-      margin: 0 0 28px;
-      padding: 28px 32px;
-      background: var(--hero);
-      color: var(--hero-ink);
-      border-radius: var(--card-radius);
-    }
-
-    .gc-welcome-logo {
-      display: block;
-      width: 150px;
-      height: auto;
-      margin: 0 0 20px;
-    }
-
-    .gc-welcome h2 {
-      margin: 0 0 8px;
-      font-weight: 400;
-      font-size: 22px;
-      line-height: 1.3;
-    }
-
-    .gc-welcome p {
-      margin: 0;
-      color: var(--hero-muted);
-      font-size: 15px;
-    }
-
-    @media (max-width: 560px) {
-      .gc-welcome {
-        padding: 22px 20px;
-      }
-
-      .gc-welcome-logo {
-        width: 124px;
-      }
-    }
 
     /* Question codes stay in the markup and the submitted data, but are not shown to respondents. */
     .q-num {
@@ -2403,7 +2365,15 @@
 
     .intro-copy p:last-child {
       margin-bottom: 0;
+    }
+
+    .intro-copy strong {
       font-weight: 500;
+    }
+
+    /* Trade Gothic has no medium cut */
+    body[data-theme="gc"] .intro-copy strong {
+      font-weight: 700;
     }
 
     .facts span {
@@ -2903,6 +2873,8 @@
       });
 
       const comms = [...new Set(units.filter(u => u.stage === "handed").map(u => u.community))];
+      /* G Communities introduces itself before its questions (handed-over homeowners only). */
+      if (comms.length) s.push({ kind: "gcintro", theme: "gc" });
       /* Part E is asked once per community, however many handed-over units the customer owns there. */
       comms.forEach((c, ci) => {
         answers.communities[c] = {};
@@ -3516,7 +3488,7 @@
     }
     function setProgress(i) {
       const total = STEPS.length - 1;
-      stepCount.innerHTML = i === 0 ? "" : `<span title="${L(`Step ${i} of ${total}`, `الخطوة ${i} من ${total}`)}">${i} / ${total}</span><span class="pct" id="pct" title="${L("Answered in this section", "تمت الإجابة في هذا القسم")}"></span>`;
+      stepCount.innerHTML = i === 0 ? "" : `<span title="${L(`Step ${i} of ${total}`, `الخطوة ${i} من ${total}`)}">${i} / ${total}</span>${STEPS[i].kind === "q" ? `<span class="pct" id="pct" title="${L("Answered in this section", "تمت الإجابة في هذا القسم")}"></span>` : ""}`;
       // new section: jump to its current fill without animating backwards, then animate per answer
       bar.style.transition = "none";
       lastPct = -1;
@@ -3636,8 +3608,9 @@
       setTheme(step.theme);
       setProgress(i);
       document.body.classList.remove("co-brand");
-      document.body.classList.toggle("is-intro", step.kind === "intro");
+      document.body.classList.toggle("is-intro", step.kind === "intro" || step.kind === "gcintro");
       if (step.kind === "intro") return renderIntro();
+      if (step.kind === "gcintro") return renderGcIntro();
       redraw = () => { readStep(step); render(cur, false); };
 
       let unitKey = "", unitVal = "", unitOf = "";
@@ -3655,7 +3628,6 @@
       const last = i === STEPS.length - 1;
       const secEnd = !last && sectionAt(i).to === i;
       app.innerHTML = `<div class="fade-in">
-    ${step.handoff ? handoffHtml() : ""}
     ${step.note ? `<p class="section-note">${bi(step.note, step.noteAr || UI_AR[step.note])}</p>` : ""}
     <form id="stepForm" novalidate>
       ${step.qs.map(id => renderQuestion(id, step)).join("")}
@@ -3672,19 +3644,8 @@
       form.addEventListener("change", () => updateProgress());
       form.addEventListener("submit", e => { e.preventDefault(); next(); });
       document.getElementById("backBtn").addEventListener("click", () => { readStep(step); render(cur - 1); });
-      stagger(".gc-welcome, .section-note, .q");
+      stagger(".section-note, .q");
       if (focusTop) { window.scrollTo({ top: 0 }); app.focus({ preventScroll: true }); }
-    }
-
-    /* Transition into Part E: introduces G Communities, with its logo, before the community questions. */
-    function handoffHtml() {
-      const logo = document.querySelector(".topbar .gc-logo");
-      return `<section class="gc-welcome">
-    ${logo ? `<img class="gc-welcome-logo" src="${logo.src}" alt="G Communities">` : ""}
-    <h2>${bi("Welcome to G Communities", "مرحبًا بك في G Communities")}</h2>
-    <p>${bi("Now that your home has been handed over, life in your community is looked after by G Communities, the G Developments company dedicated to community management and services. The next questions are about your community.",
-        "بعد استلام وحدتك، تتولى G Communities رعاية الحياة في مجتمعك، وهي شركة G Developments المتخصصة في إدارة المجتمعات وخدماتها. الأسئلة التالية عن مجتمعك.")}</p>
-  </section>`;
     }
 
     /* Shown after a section's answers have been sent: the sections so far, what comes next,
@@ -3732,21 +3693,40 @@
       celebrate(sec.id, 28);
     }
 
-    /* Intro copy approved by Abby Turner (29 Oct 2026). */
+    /* Intro copy for each company (1 Nov 2026). **text** is shown bold. */
     const INTRO = {
       en: [
-        "Thank you for being a valued member of the G Developments community.",
-        "Your experience matters to us. We invite you to share your feedback on your journey with G Developments, from the services you receive and the progress of your property to your overall community experience.",
-        "Your feedback will help us identify opportunities for improvement and continue delivering the quality of service you deserve.",
-        "We value your voice. Thank you for helping us shape a better experience."
+        "At **G Developments**, your experience is at the heart of everything we do. We are committed to making every stage of your journey with us a positive and rewarding one, built on trust, care, and meaningful connections.",
+        "We invite you to share your feedback on the services and support you receive, the quality of our communication, and your overall experience with us.",
+        "Your feedback is invaluable in helping us better understand your needs, identify opportunities for improvement, and continuously enhance the quality of our services.",
+        "**Your experience matters. Your voice makes a difference.**",
+        "Thank you for taking the time to share your thoughts with us."
       ],
       ar: [
-        "نشكرك على كونك جزءًا من مجتمع G Developments.",
-        "تجربتك تهمنا، ويسعدنا أن تشاركنا رأيك في رحلتك معنا، بدءًا من الخدمات المقدمة لك ومراحل تقدم وحدتك، وصولًا إلى تجربتك الشاملة داخل مجتمعك.",
-        "تساعدنا آراؤك وملاحظاتك على تحديد فرص التطوير والارتقاء بمستوى خدماتنا، لنواصل تقديم التجربة التي تستحقها.",
-        "رأيك يهمنا، وشكرًا لمساهمتك في تطوير تجربتك معنا."
+        "في **G Developments**، تأتي تجربتك معنا في مقدمة أولوياتنا. ونحرص على أن تكون كل مرحلة من رحلتك معنا تجربة مميزة وإيجابية، تقوم على الثقة والاهتمام والتواصل الفعّال.",
+        "يسعدنا دعوتك لمشاركة رأيك وتقييمك لمستوى الخدمات والدعم المقدم لك، وجودة التواصل معك، وتجربتك معنا بشكل عام.",
+        "تمثل آراؤك قيمة كبيرة بالنسبة لنا، فهي تساعدنا على فهم احتياجاتك بشكل أفضل، وتحديد فرص التحسين، والارتقاء المستمر بجودة خدماتنا.",
+        "**تجربتك معنا تهمنا. ورأيك يصنع الفارق.**",
+        "شكراً لتخصيص وقتك ومشاركتنا رأيك."
       ]
     };
+    const GC_INTRO = {
+      en: [
+        "At **G Communities**, the dedicated community management arm of G Developments, we are committed to creating and maintaining exceptional living environments where residents feel supported, connected, and proud to belong.",
+        "As part of our ongoing commitment to enhancing your community experience, we invite you to share your feedback on the services you receive, including community management, maintenance, facilities, and the overall quality of life within your community.",
+        "Your feedback helps us understand what matters most to you, identify areas for improvement, and continuously elevate the standards of our communities.",
+        "**Your community. Your experience. Your voice matters.**",
+        "Thank you for helping us make your community an even better place to live."
+      ],
+      ar: [
+        "في **G Communities**، الذراع المتخصصة لإدارة المجتمعات السكنية التابعة لشركة G Developments، نلتزم بتوفير بيئة سكنية متميزة والحفاظ عليها، بما يعزز شعور السكان بالراحة والانتماء والفخر بمجتمعهم السكني.",
+        "وانطلاقاً من حرصنا المستمر على الارتقاء بتجربتك داخل مجتمعك السكني، يسعدنا دعوتك لمشاركة رأيك وتقييمك لمستوى الخدمات المقدمة، بما يشمل إدارة المجتمع السكني، والصيانة والمرافق، وجودة الحياة بشكل عام داخل مجتمعك.",
+        "تساعدنا آراؤك على فهم ما يهمك، وتحديد مجالات التحسين، والعمل باستمرار على الارتقاء بمستوى الخدمات والمعايير التي نقدمها في مجتمعاتنا السكنية.",
+        "**مجتمعك. تجربتك. رأيك يهمنا.**",
+        "شكراً لمساهمتك في جعل مجتمعك السكني مكاناً أفضل للحياة."
+      ]
+    };
+    const introCopy = paras => `<div class="intro-copy">${paras.map(t => `<p>${esc(t).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")}</p>`).join("")}</div>`;
 
     function renderIntro() {
       redraw = renderIntro;
@@ -3754,8 +3734,10 @@
       const mins = handed ? 8 : 4, n = UNITS.length, secs = SECTIONS.length;
       const name = CUSTOMER.name ? `<bdi>${esc(CUSTOMER.name)}</bdi>` : "";
       setContext(null);
-      hero.innerHTML = heroHtml({ title: L("Customer Experience Survey 2026", "استبيان تجربة العملاء 2026") });
-      const greeting = isAr() ? (name ? `عزيزي/عزيزتي ${name}،` : "عميلنا العزيز،") : (name ? `Dear ${name},` : "Dear customer,");
+      hero.innerHTML = heroHtml({
+        eyebrow: L("Customer Experience Survey 2026", "استبيان تجربة العملاء 2026"), title: L("Your Experience Matters", "تجربتك معنا تهمنا")
+      });
+      const greeting = isAr() ? (name ? `عزيزي/عزيزتي ${name}،` : "عزيزي مالك الوحدة،") : (name ? `Dear ${name},` : "Dear Valued Homeowner,");
       const facts = isAr()
         ? [[mins, arCount(mins, "دقيقة تقريبًا", "دقيقتان تقريبًا", "دقائق تقريبًا", "دقيقة تقريبًا")],
         [n, arCount(n, "وحدة مشمولة", "وحدتان مشمولتان", "وحدات مشمولة", "وحدة مشمولة")],
@@ -3765,7 +3747,7 @@
         [secs, secs === 1 ? "Survey section" : "Survey sections"]];
       app.innerHTML = `<div class="panel fade-in">
     <p class="greeting">${greeting}</p>
-    <div class="intro-copy">${INTRO[LANG].map(t => `<p>${esc(t)}</p>`).join("")}</div>
+    ${introCopy(INTRO[LANG])}
     <div class="facts">${facts.map(([v, k]) => `<div><b>${esc(v)}</b><span>${esc(k)}</span></div>`).join("")}</div>
     <h2 class="next-title units-title">${L(n === 1 ? "Your property" : "Your properties", n === 1 ? "وحدتك" : "وحداتك")}</h2>
     <div class="units">${UNITS.map(u => `<div class="unit-card"><b><bdi>${unitLabel(u).split(" · ").map(p => `<span>${esc(p)}</span>`).join(" · ")}</bdi></b><span class="pill ${u.stage}">${L(STAGE_LABEL[u.stage], STAGE_AR[u.stage])}</span></div>`).join("")}</div>
@@ -3776,6 +3758,27 @@
       document.getElementById("startBtn").addEventListener("click", () => render(1));
       stagger(".greeting, .intro-copy > p, .facts > div, .units-title, .unit-card, .panel > .muted");
       countUp();
+    }
+
+    /* G Communities intro: opens the community part of the survey, in G Communities branding. */
+    function renderGcIntro() {
+      redraw = () => render(cur, false);
+      setContext(null);
+      hero.innerHTML = heroHtml({
+        eyebrow: "G Communities", title: L("Your Community Experience Matters", "تجربتك في مجتمعك السكني تهمنا")
+      });
+      app.innerHTML = `<div class="panel fade-in">
+    ${introCopy(GC_INTRO[LANG])}
+    <div class="nav">
+      <button type="button" class="btn ghost" id="backBtn">${btnLabel("Back", "رجوع")}</button>
+      <button type="button" class="btn" id="nextBtn">${btnLabel("Continue", "متابعة")}<span class="arrow" aria-hidden="true">→</span></button>
+    </div>
+  </div>`;
+      document.getElementById("backBtn").addEventListener("click", () => render(cur - 1));
+      document.getElementById("nextBtn").addEventListener("click", () => render(cur + 1));
+      stagger(".intro-copy > p");
+      window.scrollTo({ top: 0 });
+      app.focus({ preventScroll: true });
     }
 
     function renderState(kind) {
