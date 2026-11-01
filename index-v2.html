@@ -45,12 +45,88 @@
     content="A short survey about your account, your unit and your community. About 4–8 minutes.">
   <meta name="twitter:image" content="og-image.jpg">
   <meta name="twitter:image:alt" content="G Developments and G Communities: Customer Experience Survey 2026.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Figtree:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500&display=swap"
-    rel="stylesheet">
   <style>
+    /* Brand fonts: G Dev = Helvetica Now (en) + DIN Next Arabic (ar), G Comm = Trade Gothic Extended */
+    @font-face {
+      font-family: "G Dev";
+      src: url("fonts/gdev-helvetica-now-300.woff2") format("woff2");
+      font-weight: 300;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "G Dev";
+      src: url("fonts/gdev-helvetica-now-400.woff2") format("woff2");
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "G Dev";
+      src: url("fonts/gdev-helvetica-now-500.woff2") format("woff2");
+      font-weight: 500;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "G Dev";
+      src: url("fonts/gdev-helvetica-700.woff2") format("woff2");
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "G Dev Arabic";
+      src: url("fonts/gdev-din-ar-300.woff2") format("woff2");
+      font-weight: 300;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "G Dev Arabic";
+      src: url("fonts/gdev-din-ar-400.woff2") format("woff2");
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "G Dev Arabic";
+      src: url("fonts/gdev-din-ar-500.woff2") format("woff2");
+      font-weight: 500;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "G Dev Arabic";
+      src: url("fonts/gdev-din-ar-700.woff2") format("woff2");
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "G Comm";
+      src: url("fonts/gcomm-trade-gothic-ext-400.woff2") format("woff2");
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "G Comm";
+      src: url("fonts/gcomm-trade-gothic-ext-700.woff2") format("woff2");
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+
     /* ======================================================================
    DIRECTION B: "Journey"
    Dark brand hero per section, sticky header with live progress, table matrices.
@@ -76,8 +152,9 @@
       --error: #A8200D;
       --radius: 999px;
       --card-radius: 4px;
-      --font-body: "Helvetica Neue", Helvetica, Arial, sans-serif;
-      --font-head: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      --font-body: "G Dev", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      --font-head: "G Dev", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      --font-ar: "G Dev Arabic", "Segoe UI", Tahoma, sans-serif;
       --head-weight: 300;
       --head-size: 44px;
       --eyebrow-track: .22em;
@@ -103,10 +180,12 @@
       --error: #A8200D;
       --radius: 999px;
       --card-radius: 14px;
-      --font-body: "Figtree", system-ui, sans-serif;
-      --font-head: "Cormorant Garamond", "Times New Roman", serif;
-      --head-weight: 500;
-      --head-size: 52px;
+      --font-body: "G Comm", "Helvetica Neue", Arial, sans-serif;
+      --font-head: "G Comm", "Helvetica Neue", Arial, sans-serif;
+      /* The G Comm set has no Arabic cut, so Arabic stays on the group's DIN Next Arabic */
+      --font-ar: "G Dev Arabic", "Segoe UI", Tahoma, sans-serif;
+      --head-weight: 400;
+      --head-size: 40px;
       --eyebrow-track: .24em;
     }
 
@@ -129,7 +208,7 @@
     }
 
     .ar {
-      font-family: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+      font-family: var(--font-ar);
       direction: rtl;
       text-align: right;
       display: block;
@@ -607,6 +686,42 @@
       border-color: transparent;
     }
 
+    /* The star's number: shown on the hovered (or focused) star, and on the picked one */
+    .scale.stars .box {
+      position: relative;
+    }
+
+    .star-num {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-top: 3px;
+      color: var(--accent-ink);
+      font-size: 14px;
+      font-weight: 500;
+      font-variant-numeric: tabular-nums;
+      opacity: 0;
+      transition: opacity .12s ease;
+      pointer-events: none;
+    }
+
+    .m-controls .star-num {
+      font-size: 11px;
+      padding-top: 2px;
+    }
+
+    .scale.stars label:hover .star-num,
+    .scale.stars input:focus-visible + .box .star-num,
+    .scale.stars input:checked + .box .star-num {
+      opacity: 1;
+    }
+
+    .scale.stars:hover label:not(:hover) .star-num {
+      opacity: 0;
+    }
+
     .anchors {
       display: flex;
       justify-content: space-between;
@@ -871,8 +986,8 @@
       position: sticky;
       bottom: 0;
       z-index: 20;
-      margin: 30px -24px 0;
-      padding: 14px 24px calc(14px + env(safe-area-inset-bottom));
+      margin: 30px 0 0;
+      padding: 14px 0 calc(14px + env(safe-area-inset-bottom));
       background: var(--page);
       border-top: 1px solid var(--line);
     }
@@ -1189,6 +1304,20 @@
       line-height: 1.45;
       color: var(--ink);
       margin-bottom: 6px;
+    }
+
+    /* Thank-you screen: the submission confirmation leads, the closing message follows */
+    .panel .confirm {
+      margin: 0 0 8px;
+      font-size: 24px;
+      font-weight: 500;
+      line-height: 1.3;
+      color: var(--ink);
+    }
+
+    .panel .confirm + .lead {
+      font-size: 18px;
+      color: var(--muted);
     }
 
     .panel .lead-ar {
@@ -1638,7 +1767,7 @@
       }
 
       body[data-theme="gc"] {
-        --head-size: 38px;
+        --head-size: 30px;
       }
 
       .hero-inner {
@@ -1752,8 +1881,8 @@
       }
 
       .nav {
-        margin: 24px -16px 0;
-        padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+        margin: 24px 0 0;
+        padding: 12px 0 calc(12px + env(safe-area-inset-bottom));
       }
 
       .panel .nav {
@@ -1775,44 +1904,45 @@
       }
     }
 
-    /* Co-branded lockup (intro, success, error): centred, both logos the same width */
-    body.co-brand .topbar-inner {
+    /* Closing screens: the logo lockup is centred; with both logos (co-brand) they are the same width */
+    body.closing .topbar-inner {
       justify-content: center;
     }
 
-    body.co-brand .step-count {
+    body.closing .step-count {
       display: none;
     }
 
-    body.co-brand .brand {
+    body.closing .brand {
       justify-content: center;
     }
 
-    body.co-brand .gd-logo,
-    body.co-brand .gc-logo {
+    body.closing .gd-logo,
+    body.closing .gc-logo {
       width: 168px;
       height: auto;
     }
 
-    body.co-brand .logo-sep {
+    body.closing .logo-sep {
       height: 36px;
       margin: 0 28px;
     }
 
     @media (max-width: 560px) {
 
-      body.co-brand .gd-logo,
-      body.co-brand .gc-logo {
+      body.closing .gd-logo,
+      body.closing .gc-logo {
         width: 124px;
       }
 
-      body.co-brand .logo-sep {
+      body.closing .logo-sep {
         height: 28px;
         margin: 0 18px;
       }
     }
 
     /* ---------- v2 additions ---------- */
+
 
     /* Question codes stay in the markup and the submitted data, but are not shown to respondents. */
     .q-num {
@@ -1847,7 +1977,7 @@
     }
 
     .eyebrow-ar {
-      font-family: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+      font-family: var(--font-ar);
       text-transform: none;
       letter-spacing: 0;
       font-size: 13px;
@@ -1855,7 +1985,7 @@
     }
 
     .h1-ar {
-      font-family: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+      font-family: var(--font-ar);
       font-size: calc(var(--head-size) * .55);
       line-height: 1.3;
       margin: 10px 0 0;
@@ -1898,7 +2028,7 @@
     }
 
     .btn-label [lang="ar"] {
-      font-family: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+      font-family: var(--font-ar);
       letter-spacing: 0;
     }
 
@@ -1997,7 +2127,7 @@
 
     .ctx-part [lang="ar"],
     .ctx-k [lang="ar"] {
-      font-family: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+      font-family: var(--font-ar);
       text-transform: none;
       letter-spacing: 0;
     }
@@ -2074,7 +2204,7 @@
     .sec-ar {
       direction: rtl;
       text-align: right;
-      font-family: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+      font-family: var(--font-ar);
     }
 
     .sec-dot {
@@ -2163,7 +2293,7 @@
     }
 
     .lang-switch button[lang="ar"] {
-      font-family: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+      font-family: var(--font-ar);
       font-size: 13px;
       font-weight: 500;
       letter-spacing: 0;
@@ -2179,45 +2309,45 @@
       outline-offset: 2px;
     }
 
-    /* Co-branded header: logos stay centred, the switch sits at the end */
-    body.co-brand .topbar-inner {
+    /* Closing header: logos stay centred, the switch sits at the end */
+    body.closing .topbar-inner {
       display: grid;
       grid-template-columns: 1fr auto 1fr;
     }
 
-    body.co-brand .topbar-inner::before {
+    body.closing .topbar-inner::before {
       content: "";
     }
 
-    body.co-brand .top-end {
+    body.closing .top-end {
       justify-self: end;
     }
 
     /* Phones: no room to centre the logos, so they sit at the start and shrink with the screen,
        leaving the switch whole down to 320px */
     @media (max-width: 560px) {
-      body.co-brand .topbar-inner {
+      body.closing .topbar-inner {
         display: flex;
         justify-content: space-between;
         gap: 12px;
       }
 
-      body.co-brand .topbar-inner::before {
+      body.closing .topbar-inner::before {
         content: none;
       }
 
-      body.co-brand .brand {
+      body.closing .brand {
         justify-content: flex-start;
         min-width: 0;
       }
 
-      body.co-brand .gd-logo,
-      body.co-brand .gc-logo {
+      body.closing .gd-logo,
+      body.closing .gc-logo {
         width: clamp(76px, 25vw, 124px);
         min-width: 0;
       }
 
-      body.co-brand .logo-sep {
+      body.closing .logo-sep {
         height: 24px;
         margin: 0 clamp(8px, 3vw, 18px);
       }
@@ -2240,7 +2370,7 @@
     html[lang="ar"] body,
     html[lang="ar"] h1,
     html[lang="ar"] .greeting {
-      font-family: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+      font-family: var(--font-ar);
     }
 
     html[lang="ar"] body * {
@@ -2285,7 +2415,15 @@
 
     .intro-copy p:last-child {
       margin-bottom: 0;
+    }
+
+    .intro-copy strong {
       font-weight: 500;
+    }
+
+    /* Trade Gothic has no medium cut */
+    body[data-theme="gc"] .intro-copy strong {
+      font-weight: 700;
     }
 
     .facts span {
@@ -2441,7 +2579,7 @@
     const BEACH_SHARED = [
       { id: "E1.1", en: "Cleanliness", ar: "النظافة" },
       { id: "E1.2", en: "Furniture and facilities", ar: "الأثاث والمرافق" },
-      { id: "E1.3", en: "Lifeguards", ar: "منقذو الشاطئ" },
+      { id: "E1.3", en: "Lifeguards", ar: "منقذي الشاطئ" },
       { id: "E1.4", en: "Beach staff service", ar: "خدمة فريق الشاطئ" },
       { id: "E1.5", en: "Beachfront commercial area", ar: "المنطقة التجارية المواجهة للشاطئ" }
     ];
@@ -2471,8 +2609,8 @@
       },
       A6: {
         type: "rating", anchors: { en: ["Not at all likely", "Very likely"], ar: ["غير محتمل إطلاقًا", "محتمل جدًا"] },
-        en: "If you were buying another property, how likely would you be to buy from G Developments again?",
-        ar: "إذا فكرت في شراء عقار آخر، ما مدى احتمال أن تشتري من G Developments مرة أخرى؟"
+        en: "If you were to purchase another property, how likely would you be to choose G Developments again?",
+        ar: "إذا كنت ستشتري عقارًا آخر، ما مدى احتمال أن تختار G Developments مرة أخرى؟"
       },
       A7: {
         type: "text", optional: true,
@@ -2658,7 +2796,7 @@
        Answer options are shown in both languages; the submitted value stays the English option. */
     const OPT_AR = {
       "Yes": "نعم", "No": "لا",
-      "App": "التطبيق", "WhatsApp": "واتساب", "Email": "البريد الإلكتروني", "SMS": "رسائل نصية",
+      "App": "تطبيق OneCommunity", "WhatsApp": "واتساب", "Email": "البريد الإلكتروني", "SMS": "رسائل نصية",
       "Phone call": "مكالمة هاتفية", "Site visit": "زيارة الموقع",
       "Monthly": "شهريًا", "Quarterly": "كل ثلاثة أشهر", "At each milestone": "عند كل مرحلة رئيسية",
       "Less than 6 months": "أقل من 6 أشهر", "6–12 months": "من 6 إلى 12 شهرًا",
@@ -2677,12 +2815,12 @@
     const COMMUNITY_AR = { Playa: "بلايا", Seashell: "سي شل" };
     const STAGE_AR = { pre: "في انتظار الاستلام", handed: "تم الاستلام" };
     const PART_AR = {
-      "Part A · Your overall experience with G Developments": "الجزء أ · تجربتك العامة مع G Developments",
-      "Part B · Customer Excellence & account services": "الجزء ب · التميز في خدمة العملاء وخدمات الحساب",
-      "Part C · Your journey before handover": "الجزء ج · رحلتك قبل الاستلام",
-      "Part D · Your unit handover experience": "الجزء د · تجربة استلام وحدتك",
-      "Part E · Your community experience": "الجزء هـ · تجربتك في مجتمعك",
-      "Your feedback & suggestions": "آراؤك ومقترحاتك"
+      "Part A · Your Overall Experience with G Developments": "الجزء أ · تجربتك العامة مع G Developments",
+      "Part B · Customer Excellence & Account Services": "الجزء ب · خدمات العناية بالعملاء وإدارة حسابك",
+      "Part C · Your Journey Before Handover": "الجزء ج · رحلتك معنا قبل استلام وحدتك",
+      "Part D · Your Unit Handover Experience": "الجزء د · تجربتك في استلام وحدتك",
+      "Part E · Your Community Experience": "الجزء هـ · تجربتك داخل مجتمعك السكني",
+      "Your Feedback & Suggestions": "آراؤك ومقترحاتك"
     };
 
     /* ===================== LINK PARSING ===================== */
@@ -2755,13 +2893,13 @@
     function buildSteps(units) {
       const s = [{ kind: "intro", theme: "gd" }];
       s.push({
-        kind: "q", theme: "gd", scope: "customer", part: "Part A · Your overall experience with G Developments",
+        kind: "q", theme: "gd", scope: "customer", part: "Part A · Your Overall Experience with G Developments",
         title: "Your experience with G Developments", titleAr: "تجربتك مع G Developments", qs: ["A1", "A2", "A3", "A4", "A5", "A6"]
       });
       /* Part B is asked once per customer, however many units they hold (28 Oct design). */
       units.forEach((u, i) => { answers.units[i] = {}; });
       s.push({
-        kind: "q", theme: "gd", scope: "customer", part: "Part B · Customer Excellence & account services",
+        kind: "q", theme: "gd", scope: "customer", part: "Part B · Customer Excellence & Account Services",
         title: "Your account and staying in touch", titleAr: "حسابك والتواصل معك", qs: ["B1", "B2", "B3"]
       });
 
@@ -2769,7 +2907,7 @@
       units.forEach((u, i) => {
         if (u.stage === "pre") {
           s.push({
-            kind: "q", theme: "gd", scope: "unit", unit: i, part: "Part C · Your journey before handover",
+            kind: "q", theme: "gd", scope: "unit", unit: i, part: "Part C · Your Journey Before Handover",
             title: "Construction and delivery", titleAr: "الإنشاءات والتسليم", qs: ["C1", "C2", "C3"]
           });
         }
@@ -2777,7 +2915,7 @@
       units.forEach((u, i) => {
         if (u.stage === "handed") {
           s.push({
-            kind: "q", theme: "gd", scope: "unit", unit: i, part: "Part D · Your unit handover experience",
+            kind: "q", theme: "gd", scope: "unit", unit: i, part: "Part D · Your Unit Handover Experience",
             title: "Looking back at your handover", titleAr: "نظرة على استلام وحدتك", qs: ["D0", "D1", "D2", "D3", "D4", "D5", "D6", "D7", "D8", "D9"],
             note: "Before handover, at handover and after it, in that order."
           });
@@ -2785,6 +2923,8 @@
       });
 
       const comms = [...new Set(units.filter(u => u.stage === "handed").map(u => u.community))];
+      /* G Communities introduces itself before its questions (handed-over homeowners only). */
+      if (comms.length) s.push({ kind: "gcintro", theme: "gc" });
       /* Part E is asked once per community, however many handed-over units the customer owns there. */
       comms.forEach((c, ci) => {
         answers.communities[c] = {};
@@ -2795,12 +2935,12 @@
         const forAllAr = owned === 2 ? " لكلتا وحدتيك هناك" : owned > 2 ? " لكل وحداتك هناك" : "";
         const note = `These questions are about ${c} as a whole, so you answer them once${forAll}.`;
         const noteAr = `هذه الأسئلة عن ${cAr} ككل، لذلك تجيب عنها مرة واحدة${forAllAr}.`;
-        s.push({ ...base, part: "Part E · Your community experience", title: `Life in ${c}`, titleAr: `الحياة في ${cAr}`, sub: "Page 1 of 3", subAr: "صفحة 1 من 3", qs: ["E1", "E2", "E3", "E4"], handoff: ci === 0, note, noteAr });
-        s.push({ ...base, part: "Part E · Your community experience", title: `Service in ${c}`, titleAr: `الخدمة في ${cAr}`, sub: "Page 2 of 3", subAr: "صفحة 2 من 3", qs: ["E5", "E6", "E7"] });
-        s.push({ ...base, part: "Part E · Your community experience", title: `Your ${c} summer`, titleAr: `صيفك في ${cAr}`, sub: "Page 3 of 3", subAr: "صفحة 3 من 3", qs: ["E8", "E9"] });
+        s.push({ ...base, part: "Part E · Your Community Experience", title: `Life in ${c}`, titleAr: `الحياة في ${cAr}`, sub: "Page 1 of 3", subAr: "صفحة 1 من 3", qs: ["E1", "E2", "E3", "E4"], handoff: ci === 0, note, noteAr });
+        s.push({ ...base, part: "Part E · Your Community Experience", title: `Service in ${c}`, titleAr: `الخدمة في ${cAr}`, sub: "Page 2 of 3", subAr: "صفحة 2 من 3", qs: ["E5", "E6", "E7"] });
+        s.push({ ...base, part: "Part E · Your Community Experience", title: `Your ${c} summer`, titleAr: `صيفك في ${cAr}`, sub: "Page 3 of 3", subAr: "صفحة 3 من 3", qs: ["E8", "E9"] });
       });
 
-      s.push({ kind: "q", theme: "gd", scope: "customer", part: "Your feedback & suggestions", title: "Before you go", titleAr: "قبل أن تغادر", qs: ["A7", "A8"] });
+      s.push({ kind: "q", theme: "gd", scope: "customer", part: "Your Feedback & Suggestions", title: "Before you go", titleAr: "قبل أن تغادر", qs: ["A7", "A8"] });
 
       /* "Unit 1 of 2" counts only the units that Part covers (Part D skips units awaiting handover). */
       const byPart = {};
@@ -2899,7 +3039,9 @@
 
     const bi = (en, ar) => esc(L(en, ar));
     const btnLabel = (en, ar) => `<span class="btn-label">${esc(L(en, ar))}</span>`;
-    const optHtml = o => esc(L(o, OPT_AR[o]));
+    /* English display labels where they differ from the submitted value */
+    const OPT_EN = { "App": "Mobile App (OneCommunity)", "Phone call": "Phone Call", "Site visit": "Site Visit" };
+    const optHtml = o => esc(L(OPT_EN[o] || o, OPT_AR[o]));
     let uid = 0;
     const nid = () => "f" + (++uid);
 
@@ -2936,7 +3078,7 @@
       let h = `<div class="scale ${stars ? "stars" : ""} ${extraClass}">`;
       for (let n = from; n <= to; n++) {
         const of = `${n} ${L("of", "من")} ${to}`;
-        const face = stars ? `${STAR_SVG}<span class="sr-only">${of}</span>` : n;
+        const face = stars ? `${STAR_SVG}<span class="star-num" aria-hidden="true">${n}</span><span class="sr-only">${of}</span>` : n;
         h += `<label${stars ? ` title="${of}"` : ""}><input type="radio" name="${name}" value="${n}" ${String(val) === String(n) ? "checked" : ""}><span class="box">${face}</span></label>`;
       }
       return h + "</div>";
@@ -3093,7 +3235,7 @@
       const step = STEPS[i];
       setTheme(step.theme);
       setProgress(i);
-      document.body.classList.toggle("co-brand", step.kind === "intro");
+      document.body.classList.remove("co-brand", "closing");
       if (step.kind === "intro") return renderIntro();
 
       let unitTag = "";
@@ -3398,7 +3540,7 @@
     }
     function setProgress(i) {
       const total = STEPS.length - 1;
-      stepCount.innerHTML = i === 0 ? "" : `<span title="${L(`Step ${i} of ${total}`, `الخطوة ${i} من ${total}`)}">${i} / ${total}</span><span class="pct" id="pct" title="${L("Answered in this section", "تمت الإجابة في هذا القسم")}"></span>`;
+      stepCount.innerHTML = i === 0 ? "" : `<span title="${L(`Step ${i} of ${total}`, `الخطوة ${i} من ${total}`)}">${i} / ${total}</span>${STEPS[i].kind === "q" ? `<span class="pct" id="pct" title="${L("Answered in this section", "تمت الإجابة في هذا القسم")}"></span>` : ""}`;
       // new section: jump to its current fill without animating backwards, then animate per answer
       bar.style.transition = "none";
       lastPct = -1;
@@ -3517,9 +3659,10 @@
       const step = STEPS[i];
       setTheme(step.theme);
       setProgress(i);
-      document.body.classList.toggle("co-brand", step.kind === "intro");
-      document.body.classList.toggle("is-intro", step.kind === "intro");
+      document.body.classList.remove("co-brand", "closing");
+      document.body.classList.toggle("is-intro", step.kind === "intro" || step.kind === "gcintro");
       if (step.kind === "intro") return renderIntro();
+      if (step.kind === "gcintro") return renderGcIntro();
       redraw = () => { readStep(step); render(cur, false); };
 
       let unitKey = "", unitVal = "", unitOf = "";
@@ -3544,7 +3687,7 @@
         <button type="button" class="btn ghost" id="backBtn">${btnLabel("Back", "رجوع")}</button>
         <button type="submit" class="btn" id="nextBtn">${last ? btnLabel("Submit answers", "إرسال الإجابات")
           : secEnd ? btnLabel("Submit section", "إرسال القسم")
-          : btnLabel("Continue", "متابعة") + '<span class="arrow" aria-hidden="true">→</span>'}</button>
+            : btnLabel("Continue", "متابعة") + '<span class="arrow" aria-hidden="true">→</span>'}</button>
       </div>
     </form></div>`;
 
@@ -3587,7 +3730,7 @@
     <div class="state-icon ok"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
     <p class="lead" role="status">${L(`Thank you. Your answers for ${esc(secName(sec))} have reached us.`, `شكرًا لك. وصلتنا إجاباتك عن ${esc(secNameAr(sec))}.`)}</p>
     <p>${L("You can finish here, or continue with the next section. Either way, what you have answered so far is already saved.",
-      "يمكنك الإنهاء هنا أو المتابعة إلى القسم التالي. في الحالتين، إجاباتك حتى الآن محفوظة لدينا.")}</p>
+        "يمكنك الإنهاء هنا أو المتابعة إلى القسم التالي. في الحالتين، إجاباتك حتى الآن محفوظة لدينا.")}</p>
     <ol class="sec-list">${rows}</ol>
     <div class="nav">
       <button type="button" class="btn link" id="finishBtn">${btnLabel("Finish here", "إنهاء هنا")}</button>
@@ -3602,21 +3745,40 @@
       celebrate(sec.id, 28);
     }
 
-    /* Intro copy approved by Abby Turner (29 Oct 2026). */
+    /* Intro copy for each company (1 Nov 2026). **text** is shown bold. */
     const INTRO = {
       en: [
-        "Thank you for being a valued member of the G Developments community.",
-        "Your experience matters to us. We invite you to share your feedback on your journey with G Developments, from the services you receive and the progress of your property to your overall community experience.",
-        "Your feedback will help us identify opportunities for improvement and continue delivering the quality of service you deserve.",
-        "We value your voice. Thank you for helping us shape a better experience."
+        "At **G Developments**, your experience is at the heart of everything we do. We are committed to making every stage of your journey with us a positive and rewarding one, built on trust, care, and meaningful connections.",
+        "We invite you to share your feedback on the services and support you receive, the quality of our communication, and your overall experience with us.",
+        "Your feedback is invaluable in helping us better understand your needs, identify opportunities for improvement, and continuously enhance the quality of our services.",
+        "**Your experience matters. Your voice makes a difference.**",
+        "Thank you for taking the time to share your thoughts with us."
       ],
       ar: [
-        "نشكرك على كونك جزءًا من مجتمع G Developments.",
-        "تجربتك تهمنا، ويسعدنا أن تشاركنا رأيك في رحلتك معنا، بدءًا من الخدمات المقدمة لك ومراحل تقدم وحدتك، وصولًا إلى تجربتك الشاملة داخل مجتمعك.",
-        "تساعدنا آراؤك وملاحظاتك على تحديد فرص التطوير والارتقاء بمستوى خدماتنا، لنواصل تقديم التجربة التي تستحقها.",
-        "رأيك يهمنا، وشكرًا لمساهمتك في تطوير تجربتك معنا."
+        "في **G Developments**، تأتي تجربتك معنا في مقدمة أولوياتنا. ونحرص على أن تكون كل مرحلة من رحلتك معنا تجربة مميزة وإيجابية، تقوم على الثقة والاهتمام والتواصل الفعّال.",
+        "يسعدنا دعوتك لمشاركة رأيك وتقييمك لمستوى الخدمات والدعم المقدم لك، وجودة التواصل معك، وتجربتك معنا بشكل عام.",
+        "تمثل آراؤك قيمة كبيرة بالنسبة لنا، فهي تساعدنا على فهم احتياجاتك بشكل أفضل، وتحديد فرص التحسين، والارتقاء المستمر بجودة خدماتنا.",
+        "**تجربتك معنا تهمنا. ورأيك يصنع الفارق.**",
+        "شكراً لتخصيص وقتك ومشاركتنا رأيك."
       ]
     };
+    const GC_INTRO = {
+      en: [
+        "At **G Communities**, the dedicated community management arm of G Developments, we are committed to creating and maintaining exceptional living environments where residents feel supported, connected, and proud to belong.",
+        "As part of our ongoing commitment to enhancing your community experience, we invite you to share your feedback on the services you receive, including community management, maintenance, facilities, and the overall quality of life within your community.",
+        "Your feedback helps us understand what matters most to you, identify areas for improvement, and continuously elevate the standards of our communities.",
+        "**Your community. Your experience. Your voice matters.**",
+        "Thank you for helping us make your community an even better place to live."
+      ],
+      ar: [
+        "في **G Communities**، الذراع المتخصصة لإدارة المجتمعات السكنية التابعة لشركة G Developments، نلتزم بتوفير بيئة سكنية متميزة والحفاظ عليها، بما يعزز شعور السكان بالراحة والانتماء والفخر بمجتمعهم السكني.",
+        "وانطلاقاً من حرصنا المستمر على الارتقاء بتجربتك داخل مجتمعك السكني، يسعدنا دعوتك لمشاركة رأيك وتقييمك لمستوى الخدمات المقدمة، بما يشمل إدارة المجتمع السكني، والصيانة والمرافق، وجودة الحياة بشكل عام داخل مجتمعك.",
+        "تساعدنا آراؤك على فهم ما يهمك، وتحديد مجالات التحسين، والعمل باستمرار على الارتقاء بمستوى الخدمات والمعايير التي نقدمها في مجتمعاتنا السكنية.",
+        "**مجتمعك. تجربتك. رأيك يهمنا.**",
+        "شكراً لمساهمتك في جعل مجتمعك السكني مكاناً أفضل للحياة."
+      ]
+    };
+    const introCopy = paras => `<div class="intro-copy">${paras.map(t => `<p>${esc(t).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")}</p>`).join("")}</div>`;
 
     function renderIntro() {
       redraw = renderIntro;
@@ -3624,23 +3786,25 @@
       const mins = handed ? 8 : 4, n = UNITS.length, secs = SECTIONS.length;
       const name = CUSTOMER.name ? `<bdi>${esc(CUSTOMER.name)}</bdi>` : "";
       setContext(null);
-      hero.innerHTML = heroHtml({ title: L("Customer Experience Survey 2026", "استبيان تجربة العملاء 2026") });
-      const greeting = isAr() ? (name ? `عزيزي/عزيزتي ${name}،` : "عميلنا العزيز،") : (name ? `Dear ${name},` : "Dear customer,");
+      hero.innerHTML = heroHtml({
+        eyebrow: L("Customer Experience Survey 2026", "استبيان تجربة العملاء 2026"), title: L("Your Experience Matters", "تجربتك معنا تهمنا")
+      });
+      const greeting = isAr() ? (name ? `عزيزي/عزيزتي ${name}،` : "عزيزي مالك الوحدة،") : (name ? `Dear ${name},` : "Dear Valued Homeowner,");
       const facts = isAr()
         ? [[mins, arCount(mins, "دقيقة تقريبًا", "دقيقتان تقريبًا", "دقائق تقريبًا", "دقيقة تقريبًا")],
-          [n, arCount(n, "وحدة مشمولة", "وحدتان مشمولتان", "وحدات مشمولة", "وحدة مشمولة")],
-          [secs, arCount(secs, "قسم للاستبيان", "قسمان للاستبيان", "أقسام للاستبيان", "قسمًا للاستبيان")]]
+        [n, arCount(n, "وحدة مشمولة", "وحدتان مشمولتان", "وحدات مشمولة", "وحدة مشمولة")],
+        [secs, arCount(secs, "قسم للاستبيان", "قسمان للاستبيان", "أقسام للاستبيان", "قسمًا للاستبيان")]]
         : [[`${mins} min`, "Estimated time"],
-          [n, n === 1 ? "Property included" : "Properties included"],
-          [secs, secs === 1 ? "Survey section" : "Survey sections"]];
+        [n, n === 1 ? "Property included" : "Properties included"],
+        [secs, secs === 1 ? "Survey section" : "Survey sections"]];
       app.innerHTML = `<div class="panel fade-in">
     <p class="greeting">${greeting}</p>
-    <div class="intro-copy">${INTRO[LANG].map(t => `<p>${esc(t)}</p>`).join("")}</div>
+    ${introCopy(INTRO[LANG])}
     <div class="facts">${facts.map(([v, k]) => `<div><b>${esc(v)}</b><span>${esc(k)}</span></div>`).join("")}</div>
     <h2 class="next-title units-title">${L(n === 1 ? "Your property" : "Your properties", n === 1 ? "وحدتك" : "وحداتك")}</h2>
     <div class="units">${UNITS.map(u => `<div class="unit-card"><b><bdi>${unitLabel(u).split(" · ").map(p => `<span>${esc(p)}</span>`).join(" · ")}</bdi></b><span class="pill ${u.stage}">${L(STAGE_LABEL[u.stage], STAGE_AR[u.stage])}</span></div>`).join("")}</div>
-    <p class="muted">${L("Your answers are sent at the end of each section, so you can stop after any section or carry on.",
-      "تُرسل إجاباتك في نهاية كل قسم، فيمكنك التوقف بعد أي قسم أو المتابعة.")}</p>
+    <p class="muted">${L("Your responses are automatically submitted at the end of each section, so you can choose to continue or stop at any point without losing the feedback you've already shared.",
+        "يتم إرسال إجاباتك تلقائياً عند الانتهاء من كل قسم، ويمكنك اختيار الاستمرار في الاستبيان أو التوقف دون فقدان الإجابات التي سبق أن شاركتها معنا.")}</p>
     <div class="nav" style="justify-content:flex-end"><button class="btn" id="startBtn" type="button">${btnLabel("Start survey", "ابدأ الاستبيان")}<span class="arrow" aria-hidden="true">→</span></button></div>
   </div>`;
       document.getElementById("startBtn").addEventListener("click", () => render(1));
@@ -3648,11 +3812,34 @@
       countUp();
     }
 
+    /* G Communities intro: opens the community part of the survey, in G Communities branding. */
+    function renderGcIntro() {
+      redraw = () => render(cur, false);
+      setContext(null);
+      hero.innerHTML = heroHtml({
+        eyebrow: "G Communities", title: L("Your Community Experience Matters", "تجربتك في مجتمعك السكني تهمنا")
+      });
+      app.innerHTML = `<div class="panel fade-in">
+    ${introCopy(GC_INTRO[LANG])}
+    <div class="nav">
+      <button type="button" class="btn ghost" id="backBtn">${btnLabel("Back", "رجوع")}</button>
+      <button type="button" class="btn" id="nextBtn">${btnLabel("Continue", "متابعة")}<span class="arrow" aria-hidden="true">→</span></button>
+    </div>
+  </div>`;
+      document.getElementById("backBtn").addEventListener("click", () => render(cur - 1));
+      document.getElementById("nextBtn").addEventListener("click", () => render(cur + 1));
+      stagger(".intro-copy > p");
+      window.scrollTo({ top: 0 });
+      app.focus({ preventScroll: true });
+    }
+
     function renderState(kind) {
       document.body.dataset.dir = "";
       redraw = () => renderState(kind);
       setTheme("gd");
-      document.body.classList.add("co-brand");
+      const handed = !!UNITS && UNITS.some(u => u.stage === "handed");
+      document.body.classList.toggle("co-brand", handed && kind !== "invalid");
+      document.body.classList.add("closing");
       document.body.classList.remove("is-intro");
       stepCount.textContent = "";
       if (kind === "success") updateProgress(100);
@@ -3672,8 +3859,10 @@
       const doneN = SECTIONS.filter(s => sent.has(s.id)).length;
       /* The contact line only appears once A8 has been answered (an early finish can skip it). */
       const nextSteps = [
-        L("Each team reviews the answers for its own area: your account, your unit and your community.",
-          "يراجع كل فريق الإجابات الخاصة بمجاله: حسابك ووحدتك ومجتمعك."),
+        handed ? L("Each team reviews the answers for its own area: your account, your unit and your community.",
+          "يراجع كل فريق الإجابات الخاصة بمجاله: حسابك ووحدتك ومجتمعك.")
+          : L("Each team reviews the answers for its own area: your account and your unit.",
+            "يراجع كل فريق الإجابات الخاصة بمجاله: حسابك ووحدتك."),
         answers.customer.A8 === "Yes" ? L("You agreed to be contacted, so if anything needs attention a member of our team will reach out within 48 hours.",
           "وافقت على التواصل معك، لذلك إذا احتاج أي أمر إلى متابعة سيتواصل معك أحد أعضاء فريقنا خلال 48 ساعة.")
           : answers.customer.A8 === "No" ? L("You chose not to be contacted, so we won't follow up with you directly about these answers.",
@@ -3687,11 +3876,12 @@
         : (nUnits === 1 ? "unit" : "units") + (comms ? ` · ${comms} ${comms === 1 ? "community" : "communities"}` : "");
       const views = {
         success: `<div class="state-icon ok">${icons.ok}</div>
+      <p class="confirm">${L("Your responses have been successfully submitted", "تم إرسال إجاباتك بنجاح")}</p>
       <p class="lead">${endedEarly
-          ? L(`Thank you for your time. Your answers for ${doneN} of ${SECTIONS.length} sections have been received. They go directly to the teams responsible for each part of your experience.`,
-            `شكرًا لوقتك. وصلتنا إجاباتك عن ${doneN} من ${SECTIONS.length} أقسام، وستصل مباشرةً إلى الفرق المسؤولة عن كل جزء من تجربتك.`)
-          : L("Your answers have been received. They go directly to the teams responsible for each part of your experience.",
-            "تم استلام إجاباتك، وستصل مباشرةً إلى الفرق المسؤولة عن كل جزء من تجربتك. شكرًا لوقتك.")}</p>
+            ? L(`Thank you for your time. Your answers for ${doneN} of ${SECTIONS.length} sections have been received. They go directly to the teams responsible for each part of your experience.`,
+              `شكرًا لوقتك. وصلتنا إجاباتك عن ${doneN} من ${SECTIONS.length} أقسام، وستصل مباشرةً إلى الفرق المسؤولة عن كل جزء من تجربتك.`)
+            : L("Thank you for your time. Your answers go directly to the teams responsible for each part of your experience.",
+              "شكرًا لوقتك. ستصل إجاباتك مباشرةً إلى الفرق المسؤولة عن كل جزء من تجربتك.")}</p>
       <div class="facts">
         <div><b>${count || "—"}</b>${L("answers recorded", "الإجابات المسجلة")}</div>
         <div><b>${nUnits || "—"}</b>${unitsLabel}</div>
@@ -3702,14 +3892,14 @@
       <p class="muted">${L("You can now close this page.", "يمكنك الآن إغلاق هذه الصفحة.")}</p>`,
         error: `<div class="state-icon err">${icons.err}</div>
       <p class="lead">${L("Something went wrong on our side. Your answers are still on this page, so nothing is lost.",
-        "حدث خطأ من جانبنا. إجاباتك لا تزال محفوظة في هذه الصفحة، يرجى المحاولة مرة أخرى.")}</p>
+          "حدث خطأ من جانبنا. إجاباتك لا تزال محفوظة في هذه الصفحة، يرجى المحاولة مرة أخرى.")}</p>
       <div class="err-box">${L("Check your internet connection, then press <b>Try again</b>. If it keeps failing, keep this page open and try again in a few minutes.",
-        "تحقق من اتصالك بالإنترنت، ثم اضغط <b>حاول مرة أخرى</b>. إذا استمرت المشكلة، اترك هذه الصفحة مفتوحة وحاول مرة أخرى بعد بضع دقائق.")}</div>
+            "تحقق من اتصالك بالإنترنت، ثم اضغط <b>حاول مرة أخرى</b>. إذا استمرت المشكلة، اترك هذه الصفحة مفتوحة وحاول مرة أخرى بعد بضع دقائق.")}</div>
       <div class="nav" style="justify-content:flex-start"><button class="btn" id="retryBtn" type="button">${btnLabel("Try again", "حاول مرة أخرى")}</button>
       <button class="btn ghost" id="reviewBtn" type="button">${btnLabel("Review answers", "مراجعة الإجابات")}</button></div>`,
         invalid: `<div class="state-icon err">${icons.err}</div>
       <p>${L("The link may be incomplete or out of date. Please open the survey from the original email or WhatsApp message.",
-        "قد يكون الرابط غير مكتمل أو منتهي الصلاحية. يرجى فتح الاستبيان من رسالة البريد الإلكتروني أو واتساب الأصلية.")}</p>`
+          "قد يكون الرابط غير مكتمل أو منتهي الصلاحية. يرجى فتح الاستبيان من رسالة البريد الإلكتروني أو واتساب الأصلية.")}</p>`
       };
       app.innerHTML = `<div class="panel fade-in" role="${kind === "error" ? "alert" : "status"}">${views[kind]}</div>`;
       stagger(".panel > .lead, .panel > p, .err-box, .facts > div, .next-title, .next-steps li");
