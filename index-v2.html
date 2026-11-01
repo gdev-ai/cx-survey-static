@@ -45,12 +45,88 @@
     content="A short survey about your account, your unit and your community. About 4–8 minutes.">
   <meta name="twitter:image" content="og-image.jpg">
   <meta name="twitter:image:alt" content="G Developments and G Communities: Customer Experience Survey 2026.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Figtree:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500&display=swap"
-    rel="stylesheet">
   <style>
+    /* Brand fonts: G Dev = Helvetica Now (en) + DIN Next Arabic (ar), G Comm = Trade Gothic Extended */
+    @font-face {
+      font-family: "G Dev";
+      src: url("fonts/gdev-helvetica-now-300.woff2") format("woff2");
+      font-weight: 300;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "G Dev";
+      src: url("fonts/gdev-helvetica-now-400.woff2") format("woff2");
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "G Dev";
+      src: url("fonts/gdev-helvetica-now-500.woff2") format("woff2");
+      font-weight: 500;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "G Dev";
+      src: url("fonts/gdev-helvetica-700.woff2") format("woff2");
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "G Dev Arabic";
+      src: url("fonts/gdev-din-ar-300.woff2") format("woff2");
+      font-weight: 300;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "G Dev Arabic";
+      src: url("fonts/gdev-din-ar-400.woff2") format("woff2");
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "G Dev Arabic";
+      src: url("fonts/gdev-din-ar-500.woff2") format("woff2");
+      font-weight: 500;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "G Dev Arabic";
+      src: url("fonts/gdev-din-ar-700.woff2") format("woff2");
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "G Comm";
+      src: url("fonts/gcomm-trade-gothic-ext-400.woff2") format("woff2");
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "G Comm";
+      src: url("fonts/gcomm-trade-gothic-ext-700.woff2") format("woff2");
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+
     /* ======================================================================
    DIRECTION B: "Journey"
    Dark brand hero per section, sticky header with live progress, table matrices.
@@ -76,8 +152,9 @@
       --error: #A8200D;
       --radius: 999px;
       --card-radius: 4px;
-      --font-body: "Helvetica Neue", Helvetica, Arial, sans-serif;
-      --font-head: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      --font-body: "G Dev", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      --font-head: "G Dev", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      --font-ar: "G Dev Arabic", "Segoe UI", Tahoma, sans-serif;
       --head-weight: 300;
       --head-size: 44px;
       --eyebrow-track: .22em;
@@ -103,10 +180,12 @@
       --error: #A8200D;
       --radius: 999px;
       --card-radius: 14px;
-      --font-body: "Figtree", system-ui, sans-serif;
-      --font-head: "Cormorant Garamond", "Times New Roman", serif;
-      --head-weight: 500;
-      --head-size: 52px;
+      --font-body: "G Comm", "Helvetica Neue", Arial, sans-serif;
+      --font-head: "G Comm", "Helvetica Neue", Arial, sans-serif;
+      /* The G Comm set has no Arabic cut, so Arabic stays on the group's DIN Next Arabic */
+      --font-ar: "G Dev Arabic", "Segoe UI", Tahoma, sans-serif;
+      --head-weight: 400;
+      --head-size: 40px;
       --eyebrow-track: .24em;
     }
 
@@ -129,7 +208,7 @@
     }
 
     .ar {
-      font-family: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+      font-family: var(--font-ar);
       direction: rtl;
       text-align: right;
       display: block;
@@ -871,8 +950,8 @@
       position: sticky;
       bottom: 0;
       z-index: 20;
-      margin: 30px -24px 0;
-      padding: 14px 24px calc(14px + env(safe-area-inset-bottom));
+      margin: 30px 0 0;
+      padding: 14px 0 calc(14px + env(safe-area-inset-bottom));
       background: var(--page);
       border-top: 1px solid var(--line);
     }
@@ -1638,7 +1717,7 @@
       }
 
       body[data-theme="gc"] {
-        --head-size: 38px;
+        --head-size: 30px;
       }
 
       .hero-inner {
@@ -1752,8 +1831,8 @@
       }
 
       .nav {
-        margin: 24px -16px 0;
-        padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+        margin: 24px 0 0;
+        padding: 12px 0 calc(12px + env(safe-area-inset-bottom));
       }
 
       .panel .nav {
@@ -1814,6 +1893,45 @@
 
     /* ---------- v2 additions ---------- */
 
+    /* G Communities welcome (first community page) */
+    .gc-welcome {
+      margin: 0 0 28px;
+      padding: 28px 32px;
+      background: var(--hero);
+      color: var(--hero-ink);
+      border-radius: var(--card-radius);
+    }
+
+    .gc-welcome-logo {
+      display: block;
+      width: 150px;
+      height: auto;
+      margin: 0 0 20px;
+    }
+
+    .gc-welcome h2 {
+      margin: 0 0 8px;
+      font-weight: 400;
+      font-size: 22px;
+      line-height: 1.3;
+    }
+
+    .gc-welcome p {
+      margin: 0;
+      color: var(--hero-muted);
+      font-size: 15px;
+    }
+
+    @media (max-width: 560px) {
+      .gc-welcome {
+        padding: 22px 20px;
+      }
+
+      .gc-welcome-logo {
+        width: 124px;
+      }
+    }
+
     /* Question codes stay in the markup and the submitted data, but are not shown to respondents. */
     .q-num {
       display: none;
@@ -1847,7 +1965,7 @@
     }
 
     .eyebrow-ar {
-      font-family: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+      font-family: var(--font-ar);
       text-transform: none;
       letter-spacing: 0;
       font-size: 13px;
@@ -1855,7 +1973,7 @@
     }
 
     .h1-ar {
-      font-family: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+      font-family: var(--font-ar);
       font-size: calc(var(--head-size) * .55);
       line-height: 1.3;
       margin: 10px 0 0;
@@ -1898,7 +2016,7 @@
     }
 
     .btn-label [lang="ar"] {
-      font-family: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+      font-family: var(--font-ar);
       letter-spacing: 0;
     }
 
@@ -1997,7 +2115,7 @@
 
     .ctx-part [lang="ar"],
     .ctx-k [lang="ar"] {
-      font-family: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+      font-family: var(--font-ar);
       text-transform: none;
       letter-spacing: 0;
     }
@@ -2074,7 +2192,7 @@
     .sec-ar {
       direction: rtl;
       text-align: right;
-      font-family: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+      font-family: var(--font-ar);
     }
 
     .sec-dot {
@@ -2163,7 +2281,7 @@
     }
 
     .lang-switch button[lang="ar"] {
-      font-family: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+      font-family: var(--font-ar);
       font-size: 13px;
       font-weight: 500;
       letter-spacing: 0;
@@ -2240,7 +2358,7 @@
     html[lang="ar"] body,
     html[lang="ar"] h1,
     html[lang="ar"] .greeting {
-      font-family: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+      font-family: var(--font-ar);
     }
 
     html[lang="ar"] body * {
@@ -2441,7 +2559,7 @@
     const BEACH_SHARED = [
       { id: "E1.1", en: "Cleanliness", ar: "النظافة" },
       { id: "E1.2", en: "Furniture and facilities", ar: "الأثاث والمرافق" },
-      { id: "E1.3", en: "Lifeguards", ar: "منقذو الشاطئ" },
+      { id: "E1.3", en: "Lifeguards", ar: "منقذي الشاطئ" },
       { id: "E1.4", en: "Beach staff service", ar: "خدمة فريق الشاطئ" },
       { id: "E1.5", en: "Beachfront commercial area", ar: "المنطقة التجارية المواجهة للشاطئ" }
     ];
@@ -3093,7 +3211,7 @@
       const step = STEPS[i];
       setTheme(step.theme);
       setProgress(i);
-      document.body.classList.toggle("co-brand", step.kind === "intro");
+      document.body.classList.remove("co-brand");
       if (step.kind === "intro") return renderIntro();
 
       let unitTag = "";
@@ -3517,7 +3635,7 @@
       const step = STEPS[i];
       setTheme(step.theme);
       setProgress(i);
-      document.body.classList.toggle("co-brand", step.kind === "intro");
+      document.body.classList.remove("co-brand");
       document.body.classList.toggle("is-intro", step.kind === "intro");
       if (step.kind === "intro") return renderIntro();
       redraw = () => { readStep(step); render(cur, false); };
@@ -3537,6 +3655,7 @@
       const last = i === STEPS.length - 1;
       const secEnd = !last && sectionAt(i).to === i;
       app.innerHTML = `<div class="fade-in">
+    ${step.handoff ? handoffHtml() : ""}
     ${step.note ? `<p class="section-note">${bi(step.note, step.noteAr || UI_AR[step.note])}</p>` : ""}
     <form id="stepForm" novalidate>
       ${step.qs.map(id => renderQuestion(id, step)).join("")}
@@ -3544,7 +3663,7 @@
         <button type="button" class="btn ghost" id="backBtn">${btnLabel("Back", "رجوع")}</button>
         <button type="submit" class="btn" id="nextBtn">${last ? btnLabel("Submit answers", "إرسال الإجابات")
           : secEnd ? btnLabel("Submit section", "إرسال القسم")
-          : btnLabel("Continue", "متابعة") + '<span class="arrow" aria-hidden="true">→</span>'}</button>
+            : btnLabel("Continue", "متابعة") + '<span class="arrow" aria-hidden="true">→</span>'}</button>
       </div>
     </form></div>`;
 
@@ -3553,8 +3672,19 @@
       form.addEventListener("change", () => updateProgress());
       form.addEventListener("submit", e => { e.preventDefault(); next(); });
       document.getElementById("backBtn").addEventListener("click", () => { readStep(step); render(cur - 1); });
-      stagger(".section-note, .q");
+      stagger(".gc-welcome, .section-note, .q");
       if (focusTop) { window.scrollTo({ top: 0 }); app.focus({ preventScroll: true }); }
+    }
+
+    /* Transition into Part E: introduces G Communities, with its logo, before the community questions. */
+    function handoffHtml() {
+      const logo = document.querySelector(".topbar .gc-logo");
+      return `<section class="gc-welcome">
+    ${logo ? `<img class="gc-welcome-logo" src="${logo.src}" alt="G Communities">` : ""}
+    <h2>${bi("Welcome to G Communities", "مرحبًا بك في G Communities")}</h2>
+    <p>${bi("Now that your home has been handed over, life in your community is looked after by G Communities, the G Developments company dedicated to community management and services. The next questions are about your community.",
+        "بعد استلام وحدتك، تتولى G Communities رعاية الحياة في مجتمعك، وهي شركة G Developments المتخصصة في إدارة المجتمعات وخدماتها. الأسئلة التالية عن مجتمعك.")}</p>
+  </section>`;
     }
 
     /* Shown after a section's answers have been sent: the sections so far, what comes next,
@@ -3587,7 +3717,7 @@
     <div class="state-icon ok"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
     <p class="lead" role="status">${L(`Thank you. Your answers for ${esc(secName(sec))} have reached us.`, `شكرًا لك. وصلتنا إجاباتك عن ${esc(secNameAr(sec))}.`)}</p>
     <p>${L("You can finish here, or continue with the next section. Either way, what you have answered so far is already saved.",
-      "يمكنك الإنهاء هنا أو المتابعة إلى القسم التالي. في الحالتين، إجاباتك حتى الآن محفوظة لدينا.")}</p>
+        "يمكنك الإنهاء هنا أو المتابعة إلى القسم التالي. في الحالتين، إجاباتك حتى الآن محفوظة لدينا.")}</p>
     <ol class="sec-list">${rows}</ol>
     <div class="nav">
       <button type="button" class="btn link" id="finishBtn">${btnLabel("Finish here", "إنهاء هنا")}</button>
@@ -3628,11 +3758,11 @@
       const greeting = isAr() ? (name ? `عزيزي/عزيزتي ${name}،` : "عميلنا العزيز،") : (name ? `Dear ${name},` : "Dear customer,");
       const facts = isAr()
         ? [[mins, arCount(mins, "دقيقة تقريبًا", "دقيقتان تقريبًا", "دقائق تقريبًا", "دقيقة تقريبًا")],
-          [n, arCount(n, "وحدة مشمولة", "وحدتان مشمولتان", "وحدات مشمولة", "وحدة مشمولة")],
-          [secs, arCount(secs, "قسم للاستبيان", "قسمان للاستبيان", "أقسام للاستبيان", "قسمًا للاستبيان")]]
+        [n, arCount(n, "وحدة مشمولة", "وحدتان مشمولتان", "وحدات مشمولة", "وحدة مشمولة")],
+        [secs, arCount(secs, "قسم للاستبيان", "قسمان للاستبيان", "أقسام للاستبيان", "قسمًا للاستبيان")]]
         : [[`${mins} min`, "Estimated time"],
-          [n, n === 1 ? "Property included" : "Properties included"],
-          [secs, secs === 1 ? "Survey section" : "Survey sections"]];
+        [n, n === 1 ? "Property included" : "Properties included"],
+        [secs, secs === 1 ? "Survey section" : "Survey sections"]];
       app.innerHTML = `<div class="panel fade-in">
     <p class="greeting">${greeting}</p>
     <div class="intro-copy">${INTRO[LANG].map(t => `<p>${esc(t)}</p>`).join("")}</div>
@@ -3640,7 +3770,7 @@
     <h2 class="next-title units-title">${L(n === 1 ? "Your property" : "Your properties", n === 1 ? "وحدتك" : "وحداتك")}</h2>
     <div class="units">${UNITS.map(u => `<div class="unit-card"><b><bdi>${unitLabel(u).split(" · ").map(p => `<span>${esc(p)}</span>`).join(" · ")}</bdi></b><span class="pill ${u.stage}">${L(STAGE_LABEL[u.stage], STAGE_AR[u.stage])}</span></div>`).join("")}</div>
     <p class="muted">${L("Your answers are sent at the end of each section, so you can stop after any section or carry on.",
-      "تُرسل إجاباتك في نهاية كل قسم، فيمكنك التوقف بعد أي قسم أو المتابعة.")}</p>
+        "تُرسل إجاباتك في نهاية كل قسم، فيمكنك التوقف بعد أي قسم أو المتابعة.")}</p>
     <div class="nav" style="justify-content:flex-end"><button class="btn" id="startBtn" type="button">${btnLabel("Start survey", "ابدأ الاستبيان")}<span class="arrow" aria-hidden="true">→</span></button></div>
   </div>`;
       document.getElementById("startBtn").addEventListener("click", () => render(1));
@@ -3652,7 +3782,8 @@
       document.body.dataset.dir = "";
       redraw = () => renderState(kind);
       setTheme("gd");
-      document.body.classList.add("co-brand");
+      const handed = !!UNITS && UNITS.some(u => u.stage === "handed");
+      document.body.classList.toggle("co-brand", handed && kind !== "invalid");
       document.body.classList.remove("is-intro");
       stepCount.textContent = "";
       if (kind === "success") updateProgress(100);
@@ -3672,8 +3803,10 @@
       const doneN = SECTIONS.filter(s => sent.has(s.id)).length;
       /* The contact line only appears once A8 has been answered (an early finish can skip it). */
       const nextSteps = [
-        L("Each team reviews the answers for its own area: your account, your unit and your community.",
-          "يراجع كل فريق الإجابات الخاصة بمجاله: حسابك ووحدتك ومجتمعك."),
+        handed ? L("Each team reviews the answers for its own area: your account, your unit and your community.",
+          "يراجع كل فريق الإجابات الخاصة بمجاله: حسابك ووحدتك ومجتمعك.")
+          : L("Each team reviews the answers for its own area: your account and your unit.",
+            "يراجع كل فريق الإجابات الخاصة بمجاله: حسابك ووحدتك."),
         answers.customer.A8 === "Yes" ? L("You agreed to be contacted, so if anything needs attention a member of our team will reach out within 48 hours.",
           "وافقت على التواصل معك، لذلك إذا احتاج أي أمر إلى متابعة سيتواصل معك أحد أعضاء فريقنا خلال 48 ساعة.")
           : answers.customer.A8 === "No" ? L("You chose not to be contacted, so we won't follow up with you directly about these answers.",
@@ -3688,10 +3821,10 @@
       const views = {
         success: `<div class="state-icon ok">${icons.ok}</div>
       <p class="lead">${endedEarly
-          ? L(`Thank you for your time. Your answers for ${doneN} of ${SECTIONS.length} sections have been received. They go directly to the teams responsible for each part of your experience.`,
-            `شكرًا لوقتك. وصلتنا إجاباتك عن ${doneN} من ${SECTIONS.length} أقسام، وستصل مباشرةً إلى الفرق المسؤولة عن كل جزء من تجربتك.`)
-          : L("Your answers have been received. They go directly to the teams responsible for each part of your experience.",
-            "تم استلام إجاباتك، وستصل مباشرةً إلى الفرق المسؤولة عن كل جزء من تجربتك. شكرًا لوقتك.")}</p>
+            ? L(`Thank you for your time. Your answers for ${doneN} of ${SECTIONS.length} sections have been received. They go directly to the teams responsible for each part of your experience.`,
+              `شكرًا لوقتك. وصلتنا إجاباتك عن ${doneN} من ${SECTIONS.length} أقسام، وستصل مباشرةً إلى الفرق المسؤولة عن كل جزء من تجربتك.`)
+            : L("Your answers have been received. They go directly to the teams responsible for each part of your experience.",
+              "تم استلام إجاباتك، وستصل مباشرةً إلى الفرق المسؤولة عن كل جزء من تجربتك. شكرًا لوقتك.")}</p>
       <div class="facts">
         <div><b>${count || "—"}</b>${L("answers recorded", "الإجابات المسجلة")}</div>
         <div><b>${nUnits || "—"}</b>${unitsLabel}</div>
@@ -3702,14 +3835,14 @@
       <p class="muted">${L("You can now close this page.", "يمكنك الآن إغلاق هذه الصفحة.")}</p>`,
         error: `<div class="state-icon err">${icons.err}</div>
       <p class="lead">${L("Something went wrong on our side. Your answers are still on this page, so nothing is lost.",
-        "حدث خطأ من جانبنا. إجاباتك لا تزال محفوظة في هذه الصفحة، يرجى المحاولة مرة أخرى.")}</p>
+          "حدث خطأ من جانبنا. إجاباتك لا تزال محفوظة في هذه الصفحة، يرجى المحاولة مرة أخرى.")}</p>
       <div class="err-box">${L("Check your internet connection, then press <b>Try again</b>. If it keeps failing, keep this page open and try again in a few minutes.",
-        "تحقق من اتصالك بالإنترنت، ثم اضغط <b>حاول مرة أخرى</b>. إذا استمرت المشكلة، اترك هذه الصفحة مفتوحة وحاول مرة أخرى بعد بضع دقائق.")}</div>
+            "تحقق من اتصالك بالإنترنت، ثم اضغط <b>حاول مرة أخرى</b>. إذا استمرت المشكلة، اترك هذه الصفحة مفتوحة وحاول مرة أخرى بعد بضع دقائق.")}</div>
       <div class="nav" style="justify-content:flex-start"><button class="btn" id="retryBtn" type="button">${btnLabel("Try again", "حاول مرة أخرى")}</button>
       <button class="btn ghost" id="reviewBtn" type="button">${btnLabel("Review answers", "مراجعة الإجابات")}</button></div>`,
         invalid: `<div class="state-icon err">${icons.err}</div>
       <p>${L("The link may be incomplete or out of date. Please open the survey from the original email or WhatsApp message.",
-        "قد يكون الرابط غير مكتمل أو منتهي الصلاحية. يرجى فتح الاستبيان من رسالة البريد الإلكتروني أو واتساب الأصلية.")}</p>`
+          "قد يكون الرابط غير مكتمل أو منتهي الصلاحية. يرجى فتح الاستبيان من رسالة البريد الإلكتروني أو واتساب الأصلية.")}</p>`
       };
       app.innerHTML = `<div class="panel fade-in" role="${kind === "error" ? "alert" : "status"}">${views[kind]}</div>`;
       stagger(".panel > .lead, .panel > p, .err-box, .facts > div, .next-title, .next-steps li");
