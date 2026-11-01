@@ -1305,6 +1305,23 @@
       color: var(--muted);
     }
 
+    /* Closing message: same layout for the G Developments-only and joint versions */
+    .closing-msg p {
+      font-size: 17px;
+      line-height: 1.6;
+      color: var(--muted);
+      margin: 0 0 10px;
+    }
+
+    .closing-msg b {
+      color: var(--ink);
+    }
+
+    .closing-msg p:last-child {
+      margin: 18px 0 0;
+      font-size: 18px;
+    }
+
     .panel .lead-ar {
       font-size: 17px;
       color: var(--muted);
@@ -2631,14 +2648,28 @@
         type: "matrix", na: true, en: "How satisfied are you with the beach?", ar: "ما مدى رضاك عن كل مما يلي في الشاطئ؟",
         itemsBy: {
           Playa: [
-            ...BEACH_SHARED,
-            { id: "E1.6", en: "Main spine commercial area", ar: "المنطقة التجارية الرئيسية" },
-            { id: "E1.7", en: "Your overall experience at Playa Strip", ar: "تجربتك بشكل عام في بلايا ستريب" }
+            ...BEACH_SHARED
           ],
           Seashell: [
             ...BEACH_SHARED,
-            { id: "E1.6", en: "Internal commercial area, including the sports courts and kids' area", ar: "المنطقة التجارية الداخلية، بما فيها الملاعب الرياضية ومنطقة الأطفال" },
-            { id: "E1.7", en: "Seashell Walk", ar: "ممشى سيشيل" }
+            { id: "E1.6", en: "Seashell Walk", ar: "ممشى سيشيل" }
+          ]
+        }
+      },
+      /* Commercial & recreational areas (1 Nov 2026), split out of the beach question in both communities:
+         Seashell replaces the old "Internal commercial area" item; Playa takes over Main Spine and Playa Strip (were E1.6, E1.7). */
+      E1A: {
+        type: "matrix", na: true, en: "How satisfied are you with the commercial and recreational areas?",
+        ar: "ما مدى رضاك عن كل مما يلي في المناطق التجارية والترفيهية؟",
+        itemsBy: {
+          Playa: [
+            { id: "E1A.1", en: "Your overall experience at Main Spine", ar: "تجربتك بشكل عام في المنطقة التجارية الرئيسية (Main Spine)" },
+            { id: "E1A.2", en: "Your overall experience at Playa Strip", ar: "تجربتك بشكل عام في بلايا ستريب" }
+          ],
+          Seashell: [
+            { id: "E1A.1", en: "Internal Retail & Dining Area", ar: "منطقة المحلات التجارية والمطاعم الداخلية" },
+            { id: "E1A.2", en: "Sports Courts & Facilities", ar: "الملاعب والمرافق الرياضية" },
+            { id: "E1A.3", en: "Children's Play Areas", ar: "مناطق ألعاب الأطفال" }
           ]
         }
       },
@@ -2692,22 +2723,18 @@
         type: "rating", na: true, en: "How satisfied are you with the professionalism and helpfulness of the on-site operations team?",
         ar: "ما مدى رضاك عن احترافية وتعاون فريق التشغيل في الموقع؟"
       },
-      E7: {
-        type: "rating", na: true, en: "How satisfied are you with the OneCommunity App overall?",
-        ar: "ما مدى رضاك بشكل عام عن تطبيق OneCommunity؟"
-      },
-      /* E7.1–E7.3 (added 1 Nov 2026): feature-level app ratings, each reported separately, with N/A for unused features. */
-      "E7.1": {
-        type: "rating", na: true, en: "How satisfied are you with the ease of use and navigation of the OneCommunity mobile app?",
-        ar: "ما مدى رضاك عن سهولة استخدام تطبيق OneCommunity والتنقل بين أقسامه؟"
-      },
-      "E7.2": {
-        type: "rating", na: true, en: "How satisfied are you with the access and QR code features of the OneCommunity mobile app?",
-        ar: "ما مدى رضاك عن خصائص الدخول واستخدام رمز الاستجابة السريعة (QR Code) في تطبيق OneCommunity؟"
-      },
-      "E7.3": {
-        type: "rating", na: true, en: "How satisfied are you with the ease of submitting and tracking service requests through OneCommunity?",
-        ar: "ما مدى رضاك عن سهولة تقديم طلبات الخدمة ومتابعة حالتها من خلال تطبيق OneCommunity؟"
+      /* E7 (overall) plus E7.1–E7.3 (added 1 Nov 2026): feature-level app ratings, each reported separately, with N/A
+         for unused features. One matrix so N/A works the same way as on every other Part E page; answers still
+         arrive as E7, E7.1, E7.2, E7.3. */
+      E7M: {
+        type: "matrix", na: true, num: "E7", en: "How satisfied are you with the OneCommunity mobile app?",
+        ar: "ما مدى رضاك عن كل مما يلي في تطبيق OneCommunity؟",
+        items: [
+          { id: "E7", en: "The OneCommunity App overall", ar: "تطبيق OneCommunity بشكل عام" },
+          { id: "E7.1", en: "Ease of use and navigation", ar: "سهولة استخدام التطبيق والتنقل بين أقسامه" },
+          { id: "E7.2", en: "Access and QR code features", ar: "خصائص الدخول واستخدام رمز الاستجابة السريعة (QR Code)" },
+          { id: "E7.3", en: "Submitting and tracking service requests", ar: "سهولة تقديم طلبات الخدمة ومتابعة حالتها" }
+        ]
       },
       E8: {
         type: "rating", en: "Overall, how satisfied are you with your [Community] experience this summer?",
@@ -2861,14 +2888,9 @@
         answers.communities[c] = {};
         const base = { kind: "q", theme: "gc", scope: "community", community: c, commIndex: ci, commTotal: comms.length };
         const cAr = COMMUNITY_AR[c] || c;
-        const owned = units.filter(u => u.stage === "handed" && u.community === c).length;
-        const forAll = owned === 2 ? " for both of your units there" : owned > 2 ? ` for all ${owned} of your units there` : "";
-        const forAllAr = owned === 2 ? " لكلتا وحدتيك هناك" : owned > 2 ? " لكل وحداتك هناك" : "";
-        const note = `These questions are about ${c} as a whole, so you answer them once${forAll}.`;
-        const noteAr = `هذه الأسئلة عن ${cAr} ككل، لذلك تجيب عنها مرة واحدة${forAllAr}.`;
-        s.push({ ...base, part: "Part E · Your Community Experience", title: `Life in ${c}`, titleAr: `الحياة في ${cAr}`, sub: "Page 1 of 4", subAr: "صفحة 1 من 4", qs: ["E1", "E2", "E3", "E4"], handoff: ci === 0, note, noteAr });
+        s.push({ ...base, part: "Part E · Your Community Experience", title: `Life in ${c}`, titleAr: `الحياة في ${cAr}`, sub: "Page 1 of 4", subAr: "صفحة 1 من 4", qs: ["E1", "E1A", "E2", "E3", "E4"], handoff: ci === 0 });
         s.push({ ...base, part: "Part E · Your Community Experience", title: `Service in ${c}`, titleAr: `الخدمة في ${cAr}`, sub: "Page 2 of 4", subAr: "صفحة 2 من 4", qs: ["E5", "E6"] });
-        s.push({ ...base, part: "Part E · Your Community Experience", title: "OneCommunity Mobile Application Experience", titleAr: "تجربتك مع تطبيق OneCommunity", sub: "Page 3 of 4", subAr: "صفحة 3 من 4", qs: ["E7", "E7.1", "E7.2", "E7.3"] });
+        s.push({ ...base, part: "Part E · Your Community Experience", title: "OneCommunity Mobile Application Experience", titleAr: "تجربتك مع تطبيق OneCommunity", sub: "Page 3 of 4", subAr: "صفحة 3 من 4", qs: ["E7M"] });
         s.push({ ...base, part: "Part E · Your Community Experience", title: `Your ${c} summer`, titleAr: `صيفك في ${cAr}`, sub: "Page 4 of 4", subAr: "صفحة 4 من 4", qs: ["E8", "E9"] });
       });
 
@@ -3037,7 +3059,7 @@
       } else if (q.type === "text") {
         const fid = nid();
         return `<div class="q" data-q="${id}" ${hidden}>
-      <label class="q-label" for="${fid}"><span class="q-num">${esc(id)}</span>${esc(qText(q, c))}${q.optional ? `<span class="opt-tag">${L("Optional", "اختياري")}</span>` : ""}</label>
+      <label class="q-label" for="${fid}"><span class="q-num">${esc(q.num || id)}</span>${esc(qText(q, c))}${q.optional ? `<span class="opt-tag">${L("Optional", "اختياري")}</span>` : ""}</label>
       <div class="q-body"><textarea id="${fid}" name="${name}" maxlength="2000">${esc(a[id] || "")}</textarea></div>
       <div class="q-error" role="alert">${L("Please answer this question.", "يرجى الإجابة على هذا السؤال.")}</div></div>`;
       }
@@ -3401,12 +3423,12 @@
     const layout = document.getElementById("layout");
     const SHORT = {
       A1: "Your experience", B2: "Staying in touch", B1: "Account", C1: "Construction & delivery",
-      D0: "Handover look-back", E1: "Places & facilities", E5: "Service", E7: "OneCommunity app", E8: "Your summer", A7: "Before you go"
+      D0: "Handover look-back", E1: "Places & facilities", E5: "Service", E7: "OneCommunity app", E8: "Your summer", A7: "Your feedback & suggestions"
     };
     const pad = n => String(n).padStart(2, "0");
 
     function labelBlock(id, q, c, tag = "div") {
-      return `<span class="q-head"><${tag} class="q-label"><span class="q-num">${esc(id)}</span>${esc(qText(q, c))}${q.optional ? `<span class="opt-tag">${L("Optional", "اختياري")}</span>` : ""}${q.hint ? `<span class="q-hint" style="display:block">${esc(L(q.hint, UI_AR[q.hint]))}</span>` : ""}</${tag}></span>`;
+      return `<span class="q-head"><${tag} class="q-label"><span class="q-num">${esc(q.num || id)}</span>${esc(qText(q, c))}${q.optional ? `<span class="opt-tag">${L("Optional", "اختياري")}</span>` : ""}${q.hint ? `<span class="q-hint" style="display:block">${esc(L(q.hint, UI_AR[q.hint]))}</span>` : ""}</${tag}></span>`;
     }
 
     function matrixBody(q, a, c) {
@@ -3649,8 +3671,8 @@
     <p class="confirm" role="status">${L("Your responses have been successfully saved.", "تم حفظ إجاباتك بنجاح.")}</p>
     <p class="cp-note">${L("You can continue to the next section or finish the survey here.", "يمكنك المتابعة إلى القسم التالي أو إنهاء الاستبيان هنا.")}<br>${L("Your feedback will be retained either way.", "سيتم الاحتفاظ بملاحظاتك في كلتا الحالتين.")}</p>
     <div class="nav">
-      <button type="button" class="btn" id="continueBtn">${btnLabel("Continue to Next Section", "المتابعة إلى القسم التالي")}<span class="arrow" aria-hidden="true">→</span></button>
       <button type="button" class="btn ghost" id="finishBtn">${btnLabel("Finish Survey", "إنهاء الاستبيان")}</button>
+      <button type="button" class="btn" id="continueBtn">${btnLabel("Continue to Next Section", "المتابعة إلى القسم التالي")}<span class="arrow" aria-hidden="true">→</span></button>
     </div>
   </div>`;
       document.getElementById("continueBtn").addEventListener("click", () => render(sec.to + 1));
@@ -3754,13 +3776,15 @@
       redraw = () => renderState(kind);
       setTheme("gd");
       const handed = !!UNITS && UNITS.some(u => u.stage === "handed");
-      document.body.classList.toggle("co-brand", handed && kind !== "invalid");
+      /* Closing branding: both logos and the joint message only once a G Communities (Part E) section was completed. */
+      const joint = handed && SECTIONS.some(s => s.community && sent.has(s.id));
+      document.body.classList.toggle("co-brand", kind === "success" ? joint : handed && kind !== "invalid");
       document.body.classList.add("closing");
       document.body.classList.remove("is-intro");
       stepCount.textContent = "";
       if (kind === "success") updateProgress(100);
-      const titles = { success: "Thank you", error: "We couldn't send your answers", invalid: "This survey link isn't valid" };
-      const titlesAr = { success: "شكرًا لك", error: "تعذر إرسال إجاباتك", invalid: "رابط الاستبيان غير صالح" };
+      const titles = { success: "Thank You for Sharing Your Feedback", error: "We couldn't send your answers", invalid: "This survey link isn't valid" };
+      const titlesAr = { success: "شكرًا لمشاركتنا رأيك", error: "تعذر إرسال إجاباتك", invalid: "رابط الاستبيان غير صالح" };
       setContext(null);
       hero.innerHTML = heroHtml({
         eyebrow: L("Customer Experience Survey 2026", "استبيان تجربة العملاء 2026"), title: L(titles[kind], titlesAr[kind])
@@ -3786,6 +3810,22 @@
         L("If you need to reach us in the meantime, quote your reference so we can find your answers.",
           "إذا احتجت إلى التواصل معنا في هذه الأثناء، اذكر رقمك المرجعي حتى نتمكن من الوصول إلى إجاباتك.")
       ].filter(Boolean);
+      /* Closing copy (Abada, 1 Nov 2026): G Developments only, or joint with G Communities. */
+      const GD = "<b><bdi>G Developments</bdi></b>", GC = "<b><bdi>G Communities</bdi></b>";
+      const closingParas = [
+        L("Thank you for taking the time to share your experience with us.", "نشكرك على تخصيص وقتك لمشاركة تجربتك معنا."),
+        joint
+          ? L("Your feedback helps us continuously enhance our services and create a better experience, both in our relationship with you and within the community you call home.",
+            "تساعدنا آراؤك على تطوير خدماتنا باستمرار، والارتقاء بتجربتك معنا وبجودة الحياة داخل مجتمعك السكني.")
+          : L("Your feedback helps us better understand your needs, continuously enhance our services, and make every stage of your journey with G Developments a better experience.",
+            "تساعدنا آراؤك على فهم احتياجاتك بشكل أفضل، وتطوير خدماتنا باستمرار، والارتقاء بتجربتك في كل مرحلة من رحلتك مع <bdi>G Developments</bdi>."),
+        joint
+          ? L(`Together, ${GD} and ${GC} remain committed to delivering the quality, care, and service you deserve.`,
+            `تواصل ${GD} و${GC} العمل معًا لتقديم أعلى مستويات الجودة والاهتمام والخدمة التي تستحقها.`)
+          : L(`At ${GD}, we remain committed to delivering the quality, care, and service you deserve.`,
+            `في ${GD}، نواصل التزامنا بتقديم مستوى الجودة والاهتمام والخدمة الذي تستحقه.`),
+        `<b>${L("Your trust inspires us. Your feedback helps us grow.", "ثقتك مصدر إلهامنا، ورأيك يساعدنا على التطور.")}</b>`
+      ];
       const nUnits = UNITS ? UNITS.length : 0;
       const unitsLabel = isAr()
         ? arCount(nUnits, "وحدة", "وحدتان", "وحدات", "وحدة") + (comms ? ` · ${comms} ${arCount(comms, "مجتمع", "مجتمعان", "مجتمعات", "مجتمعًا")}` : "")
@@ -3793,11 +3833,9 @@
       const views = {
         success: `<div class="state-icon ok">${icons.ok}</div>
       <p class="confirm">${L("Your responses have been successfully submitted", "تم إرسال إجاباتك بنجاح")}</p>
-      <p class="lead">${endedEarly
-            ? L(`Thank you for your time. Your answers for ${doneN} of ${SECTIONS.length} sections have been received. They go directly to the teams responsible for each part of your experience.`,
-              `شكرًا لوقتك. وصلتنا إجاباتك عن ${doneN} من ${SECTIONS.length} أقسام، وستصل مباشرةً إلى الفرق المسؤولة عن كل جزء من تجربتك.`)
-            : L("Thank you for your time. Your answers go directly to the teams responsible for each part of your experience.",
-              "شكرًا لوقتك. ستصل إجاباتك مباشرةً إلى الفرق المسؤولة عن كل جزء من تجربتك.")}</p>
+      <div class="closing-msg">${closingParas.map(t => `<p>${t}</p>`).join("")}</div>
+      ${endedEarly ? `<p class="muted">${L(`Your answers for ${doneN} of ${SECTIONS.length} sections have been received.`,
+            `وصلتنا إجاباتك عن ${doneN} من ${SECTIONS.length} أقسام.`)}</p>` : ""}
       <div class="facts">
         <div><b>${count || "—"}</b>${L("answers recorded", "الإجابات المسجلة")}</div>
         <div><b>${nUnits || "—"}</b>${unitsLabel}</div>
@@ -3818,7 +3856,7 @@
           "قد يكون الرابط غير مكتمل أو منتهي الصلاحية. يرجى فتح الاستبيان من رسالة البريد الإلكتروني أو واتساب الأصلية.")}</p>`
       };
       app.innerHTML = `<div class="panel fade-in" role="${kind === "error" ? "alert" : "status"}">${views[kind]}</div>`;
-      stagger(".panel > .lead, .panel > p, .err-box, .facts > div, .next-title, .next-steps li");
+      stagger(".panel > .lead, .panel > p, .closing-msg p, .err-box, .facts > div, .next-title, .next-steps li");
       countUp();
       window.scrollTo({ top: 0 });
       if (kind === "success") celebrate("success", 48);

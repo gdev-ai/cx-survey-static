@@ -109,7 +109,7 @@ D6 changed meaning on 28 Oct: it used to be a defect count and is now a 1–5 ra
 
 ### `communities[].answers`: Part E
 
-All E1–E5 rows are 1–5 or N/A. **The same key means different things in the two communities**, so always read it together with `community`.
+All E1–E5 rows (including E1A) are 1–5 or N/A. **The same key means different things in the two communities**, so always read it together with `community`.
 
 | Key | Playa | Seashell |
 |---|---|---|
@@ -118,8 +118,10 @@ All E1–E5 rows are 1–5 or N/A. **The same key means different things in the 
 | `E1.3` | Beach: Lifeguards | Beach: Lifeguards |
 | `E1.4` | Beach: Beach staff service | Beach: Beach staff service |
 | `E1.5` | Beach: Beachfront commercial area | Beach: Beachfront commercial area |
-| `E1.6` | Beach: Main spine commercial area | Beach: Internal commercial area (sports courts, kids' area) |
-| `E1.7` | Beach: Overall experience at Playa Strip | Beach: Seashell Walk |
+| `E1.6` | — (not asked; moved to `E1A.1` on 1 Nov) | Beach: Seashell Walk |
+| `E1A.1` | Commercial & recreational: Overall experience at Main Spine | Commercial & recreational: Internal retail & dining area |
+| `E1A.2` | Commercial & recreational: Overall experience at Playa Strip | Commercial & recreational: Sports courts & facilities |
+| `E1A.3` | — (not asked) | Commercial & recreational: Children's play areas |
 | `E2.1` | Lagoons cleanliness and water quality | Pool cleanliness and water quality |
 | `E2.2` | Swimmable lagoon cleanliness and water quality | Pool lifeguards |
 | `E2.3` | Fountains cleanliness | Swimmable lagoon cleanliness and water quality |
@@ -175,7 +177,7 @@ All E1–E5 rows are 1–5 or N/A. **The same key means different things in the 
   ],
   "communities": [
     { "community": "Playa",
-      "answers": { "E1.1": 5, "E1.2": 4, "E1.3": 5, "E1.4": 4, "E1.5": 4, "E1.6": 3, "E1.7": 4,
+      "answers": { "E1.1": 5, "E1.2": 4, "E1.3": 5, "E1.4": 4, "E1.5": 4, "E1A.1": 3, "E1A.2": 4,
                    "E2.1": 4, "E2.2": 4, "E2.3": "N/A",
                    "E3.1": 5, "E3.2": 4, "E3.3": 4, "E3.4": 3, "E3.5": 2,
                    "E4.1": 4, "E4.2": 4, "E4.3": 5, "E4.4": 3,
@@ -198,7 +200,7 @@ The payload is nested, so it fits best in three data extensions joined on `Ref`.
    - Answer fields: `C1_1`, `C1_2`, `C2`, `C3`, `D0` to `D9`, `D8_detail`.
 3. **`CX_Survey_2026_Communities`**: one row per `ref` and `community`, with that pair as the primary key.
    - Response fields: `Ref`, `CustomerId`, `Community`.
-   - Answer fields: `E1_1` to `E1_7`, `E2_1` to `E2_4`, `E3_1` to `E3_5`, `E4_1` to `E4_4`, `E5_1` to `E5_3`, `E6`, `E7`, `E7_1` to `E7_3`, `E8`, `E9`, `E9_other`.
+   - Answer fields: `E1_1` to `E1_6`, `E1A_1` to `E1A_3`, `E2_1` to `E2_4`, `E3_1` to `E3_5`, `E4_1` to `E4_4`, `E5_1` to `E5_3`, `E6`, `E7`, `E7_1` to `E7_3`, `E8`, `E9`, `E9_other`.
 
 **Follow-up triggers** (from the design doc). Each one applies only if `A8 = "Yes"`:
 
