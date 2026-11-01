@@ -698,8 +698,8 @@
     }
 
     .scale.stars label:hover .star-num,
-    .scale.stars input:focus-visible + .box .star-num,
-    .scale.stars input:checked + .box .star-num {
+    .scale.stars input:focus-visible+.box .star-num,
+    .scale.stars input:checked+.box .star-num {
       opacity: 1;
     }
 
@@ -1300,7 +1300,7 @@
       color: var(--ink);
     }
 
-    .panel .confirm + .lead {
+    .panel .confirm+.lead {
       font-size: 18px;
       color: var(--muted);
     }
@@ -2696,6 +2696,19 @@
         type: "rating", na: true, en: "How satisfied are you with the OneCommunity App overall?",
         ar: "ما مدى رضاك بشكل عام عن تطبيق OneCommunity؟"
       },
+      /* E7.1–E7.3 (added 1 Nov 2026): feature-level app ratings, each reported separately, with N/A for unused features. */
+      "E7.1": {
+        type: "rating", na: true, en: "How satisfied are you with the ease of use and navigation of the OneCommunity mobile app?",
+        ar: "ما مدى رضاك عن سهولة استخدام تطبيق OneCommunity والتنقل بين أقسامه؟"
+      },
+      "E7.2": {
+        type: "rating", na: true, en: "How satisfied are you with the access and QR code features of the OneCommunity mobile app?",
+        ar: "ما مدى رضاك عن خصائص الدخول واستخدام رمز الاستجابة السريعة (QR Code) في تطبيق OneCommunity؟"
+      },
+      "E7.3": {
+        type: "rating", na: true, en: "How satisfied are you with the ease of submitting and tracking service requests through OneCommunity?",
+        ar: "ما مدى رضاك عن سهولة تقديم طلبات الخدمة ومتابعة حالتها من خلال تطبيق OneCommunity؟"
+      },
       E8: {
         type: "rating", en: "Overall, how satisfied are you with your [Community] experience this summer?",
         ar: "بشكل عام، ما مدى رضاك عن تجربتك في [Community] هذا الصيف؟"
@@ -2853,9 +2866,10 @@
         const forAllAr = owned === 2 ? " لكلتا وحدتيك هناك" : owned > 2 ? " لكل وحداتك هناك" : "";
         const note = `These questions are about ${c} as a whole, so you answer them once${forAll}.`;
         const noteAr = `هذه الأسئلة عن ${cAr} ككل، لذلك تجيب عنها مرة واحدة${forAllAr}.`;
-        s.push({ ...base, part: "Part E · Your Community Experience", title: `Life in ${c}`, titleAr: `الحياة في ${cAr}`, sub: "Page 1 of 3", subAr: "صفحة 1 من 3", qs: ["E1", "E2", "E3", "E4"], handoff: ci === 0, note, noteAr });
-        s.push({ ...base, part: "Part E · Your Community Experience", title: `Service in ${c}`, titleAr: `الخدمة في ${cAr}`, sub: "Page 2 of 3", subAr: "صفحة 2 من 3", qs: ["E5", "E6", "E7"] });
-        s.push({ ...base, part: "Part E · Your Community Experience", title: `Your ${c} summer`, titleAr: `صيفك في ${cAr}`, sub: "Page 3 of 3", subAr: "صفحة 3 من 3", qs: ["E8", "E9"] });
+        s.push({ ...base, part: "Part E · Your Community Experience", title: `Life in ${c}`, titleAr: `الحياة في ${cAr}`, sub: "Page 1 of 4", subAr: "صفحة 1 من 4", qs: ["E1", "E2", "E3", "E4"], handoff: ci === 0, note, noteAr });
+        s.push({ ...base, part: "Part E · Your Community Experience", title: `Service in ${c}`, titleAr: `الخدمة في ${cAr}`, sub: "Page 2 of 4", subAr: "صفحة 2 من 4", qs: ["E5", "E6"] });
+        s.push({ ...base, part: "Part E · Your Community Experience", title: "OneCommunity Mobile Application Experience", titleAr: "تجربتك مع تطبيق OneCommunity", sub: "Page 3 of 4", subAr: "صفحة 3 من 4", qs: ["E7", "E7.1", "E7.2", "E7.3"] });
+        s.push({ ...base, part: "Part E · Your Community Experience", title: `Your ${c} summer`, titleAr: `صيفك في ${cAr}`, sub: "Page 4 of 4", subAr: "صفحة 4 من 4", qs: ["E8", "E9"] });
       });
 
       s.push({ kind: "q", theme: "gd", scope: "customer", part: "Your Feedback & Suggestions", title: "We'd Love to Hear More", titleAr: "يسعدنا أن نسمع المزيد منك", qs: ["A7", "A8"] });
@@ -3262,7 +3276,7 @@
       if (!REF) REF = "CX26-" + Math.random().toString(36).slice(2, 8).toUpperCase();
       return {
         survey: "CX-2026",
-        questionSet: "2026-10-28",  // version of the question bank (Unified Design 1.1)
+        questionSet: "2026-11-01",  // version of the question bank (Unified Design 1.1)
         lang: LANG,                // language the customer answered in: "en" or "ar"
         ref: REF,
         status,                    // "partial" (end of a section) or "complete" (the customer finished)
@@ -3387,7 +3401,7 @@
     const layout = document.getElementById("layout");
     const SHORT = {
       A1: "Your experience", B2: "Staying in touch", B1: "Account", C1: "Construction & delivery",
-      D0: "Handover look-back", E1: "Places & facilities", E5: "Service & app", E8: "Your summer", A7: "Before you go"
+      D0: "Handover look-back", E1: "Places & facilities", E5: "Service", E7: "OneCommunity app", E8: "Your summer", A7: "Before you go"
     };
     const pad = n => String(n).padStart(2, "0");
 

@@ -1,6 +1,6 @@
 # CX Survey 2026 (static v2): response payload
 
-What `index-v2.html` sends for each response. Question set `2026-10-28` (Unified Design 1.1).
+What `index-v2.html` sends for each response. Question set `2026-11-01` (Unified Design 1.1 + app feature ratings E7.1–E7.3).
 
 ## How it is sent
 
@@ -19,7 +19,7 @@ What `index-v2.html` sends for each response. Question set `2026-10-28` (Unified
 | Key | Type | Values / notes |
 |---|---|---|
 | `survey` | string | Always `"CX-2026"` |
-| `questionSet` | string | `"2026-10-28"`. Changes whenever questions change. |
+| `questionSet` | string | `"2026-11-01"`. Changes whenever questions change. |
 | `lang` | string | `"en"` or `"ar"`: the language the customer answered in |
 | `ref` | string | `CX26-XXXXXX` (6 uppercase letters or digits). Response id: one per customer per browser. |
 | `status` | string | `"partial"` or `"complete"` |
@@ -138,6 +138,9 @@ All E1–E5 rows are 1–5 or N/A. **The same key means different things in the 
 | `E5.3` | Request or complaint: follow-up | same |
 | `E6` | On-site operations team (1–5 or N/A) | same |
 | `E7` | OneCommunity App overall (1–5 or N/A) | same |
+| `E7.1` | OneCommunity App: ease of use and navigation (1–5 or N/A) | same |
+| `E7.2` | OneCommunity App: access and QR code features (1–5 or N/A) | same |
+| `E7.3` | OneCommunity App: submitting and tracking service requests (1–5 or N/A) | same |
 | `E8` | Overall community experience this summer (1–5) | same |
 | `E9` | Areas to improve for Summer 2027 (multi): `Beach`, `Pools & lagoons`, `Security & traffic`, `Facilities`, `Operations team`, `App`, `Other` | same |
 | `E9_other` | Text when `E9` includes `Other` (optional) | same |
@@ -147,7 +150,7 @@ All E1–E5 rows are 1–5 or N/A. **The same key means different things in the 
 ```json
 {
   "survey": "CX-2026",
-  "questionSet": "2026-10-28",
+  "questionSet": "2026-11-01",
   "lang": "ar",
   "ref": "CX26-OG7VBR",
   "status": "complete",
@@ -176,7 +179,7 @@ All E1–E5 rows are 1–5 or N/A. **The same key means different things in the 
                    "E2.1": 4, "E2.2": 4, "E2.3": "N/A",
                    "E3.1": 5, "E3.2": 4, "E3.3": 4, "E3.4": 3, "E3.5": 2,
                    "E4.1": 4, "E4.2": 4, "E4.3": 5, "E4.4": 3,
-                   "E5.1": 3, "E5.2": 3, "E5.3": 2, "E6": 4, "E7": "N/A", "E8": 4,
+                   "E5.1": 3, "E5.2": 3, "E5.3": 2, "E6": 4, "E7": 4, "E7.1": 4, "E7.2": 5, "E7.3": "N/A", "E8": 4,
                    "E9": ["Security & traffic", "Other"], "E9_other": "More shade at the beach" } }
   ]
 }
@@ -195,7 +198,7 @@ The payload is nested, so it fits best in three data extensions joined on `Ref`.
    - Answer fields: `C1_1`, `C1_2`, `C2`, `C3`, `D0` to `D9`, `D8_detail`.
 3. **`CX_Survey_2026_Communities`**: one row per `ref` and `community`, with that pair as the primary key.
    - Response fields: `Ref`, `CustomerId`, `Community`.
-   - Answer fields: `E1_1` to `E1_7`, `E2_1` to `E2_4`, `E3_1` to `E3_5`, `E4_1` to `E4_4`, `E5_1` to `E5_3`, `E6`, `E7`, `E8`, `E9`, `E9_other`.
+   - Answer fields: `E1_1` to `E1_7`, `E2_1` to `E2_4`, `E3_1` to `E3_5`, `E4_1` to `E4_4`, `E5_1` to `E5_3`, `E6`, `E7`, `E7_1` to `E7_3`, `E8`, `E9`, `E9_other`.
 
 **Follow-up triggers** (from the design doc). Each one applies only if `A8 = "Yes"`:
 
