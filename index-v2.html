@@ -46,7 +46,7 @@
   <meta name="twitter:image" content="og-image.jpg">
   <meta name="twitter:image:alt" content="G Developments and G Communities: Customer Experience Survey 2026.">
   <style>
-    /* Brand fonts: G Dev = Helvetica Now (en) + DIN Next Arabic (ar), G Comm = Trade Gothic Extended */
+    /* Brand fonts, used by both companies: Helvetica Now (en) + DIN Next Arabic (ar) */
     @font-face {
       font-family: "G Dev";
       src: url("fonts/gdev-helvetica-now-300.woff2") format("woff2");
@@ -111,21 +111,7 @@
       font-display: swap;
     }
 
-    @font-face {
-      font-family: "G Comm";
-      src: url("fonts/gcomm-trade-gothic-ext-400.woff2") format("woff2");
-      font-weight: 400;
-      font-style: normal;
-      font-display: swap;
-    }
 
-    @font-face {
-      font-family: "G Comm";
-      src: url("fonts/gcomm-trade-gothic-ext-700.woff2") format("woff2");
-      font-weight: 700;
-      font-style: normal;
-      font-display: swap;
-    }
 
     /* ======================================================================
    DIRECTION B: "Journey"
@@ -180,12 +166,11 @@
       --error: #A8200D;
       --radius: 999px;
       --card-radius: 14px;
-      --font-body: "G Comm", "Helvetica Neue", Arial, sans-serif;
-      --font-head: "G Comm", "Helvetica Neue", Arial, sans-serif;
-      /* The G Comm set has no Arabic cut, so Arabic stays on the group's DIN Next Arabic */
+      --font-body: "G Dev", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      --font-head: "G Dev", "Helvetica Neue", Helvetica, Arial, sans-serif;
       --font-ar: "G Dev Arabic", "Segoe UI", Tahoma, sans-serif;
-      --head-weight: 400;
-      --head-size: 40px;
+      --head-weight: 300;
+      --head-size: 44px;
       --eyebrow-track: .24em;
     }
 
@@ -1675,26 +1660,6 @@
       }
     }
 
-    /* Checkpoint: saved sections tick in turn, the next one pulses */
-    .sec.is-done .sec-dot {
-      animation: dotIn .5s var(--ease-spring) calc(380ms + var(--i, 0) * 90ms) both;
-    }
-
-    .sec.is-next .sec-dot {
-      animation: beacon 1.8s ease-out .8s infinite;
-    }
-
-    @keyframes beacon {
-      0% {
-        box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 45%, transparent);
-      }
-
-      80%,
-      100% {
-        box-shadow: 0 0 0 10px transparent;
-      }
-    }
-
     /* Check mark: a ring spreads out from it */
     .state-icon {
       position: relative;
@@ -1767,7 +1732,7 @@
       }
 
       body[data-theme="gc"] {
-        --head-size: 30px;
+        --head-size: 32px;
       }
 
       .hero-inner {
@@ -2171,87 +2136,45 @@
 
     }
 
-    /* Section checkpoint: every section with its state (saved / up next / later) */
-    .sec-list {
-      list-style: none;
-      margin: 24px 0 0;
-      padding: 0;
-      border-top: 1px solid var(--line);
+    /* Section checkpoint: centred confirmation, continue or finish */
+    .checkpoint {
+      text-align: center;
     }
 
-    .sec {
-      display: grid;
-      grid-template-columns: 18px 1fr auto;
-      gap: 4px 14px;
-      align-items: start;
-      padding: 14px 12px;
-      border-bottom: 1px solid var(--line);
+    .state-icon.saved {
+      margin: 0 auto 16px;
+      background: #E3F1E8;
+      color: #2E7D4F;
     }
 
-    .sec b {
-      display: block;
-      font-weight: 500;
+    .checkpoint .confirm {
+      font-size: 22px;
+    }
+
+    .checkpoint .cp-note {
+      margin: 0 auto;
+      max-width: 52ch;
+      color: var(--muted);
       font-size: 15px;
+      line-height: 1.6;
     }
 
-    .sec small {
-      display: block;
-      margin-top: 3px;
-      font-size: 13px;
-      color: var(--muted);
+    .panel.checkpoint .nav {
+      position: static;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin: 26px 0 0;
+      padding: 0;
+      border: 0;
+      background: none;
     }
 
-    .sec-ar {
-      direction: rtl;
-      text-align: right;
-      font-family: var(--font-ar);
-    }
-
-    .sec-dot {
-      width: 18px;
-      height: 18px;
-      margin-top: 2px;
-      border-radius: 50%;
-      border: 1.5px solid var(--line-strong);
-      box-sizing: border-box;
-    }
-
-    .sec.is-done .sec-dot {
-      border-color: var(--accent);
-      background: var(--accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 8.2l2.3 2.3 4.7-4.9' fill='none' stroke='%23fff' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 100% no-repeat;
-    }
-
-    .sec.is-next {
-      background: var(--accent-tint);
-    }
-
-    .sec.is-next .sec-dot {
-      border-color: var(--accent);
-      background: radial-gradient(circle, var(--accent) 0 4px, transparent 4.5px);
-    }
-
-    .sec.is-next small {
-      color: var(--ink);
-    }
-
-    .sec.is-todo b {
-      font-weight: 400;
-      color: var(--muted);
+    .panel.checkpoint .nav::before {
+      content: none;
     }
 
     .send-err .ar {
       margin-top: 4px;
-    }
-
-    @media (max-width: 640px) {
-      .sec {
-        grid-template-columns: 18px 1fr;
-        padding: 12px 8px;
-      }
-
-      .sec-ar {
-        grid-column: 2;
-      }
     }
 
     /* ---------- One language at a time (EN / AR switch in the header) ---------- */
@@ -2419,11 +2342,6 @@
 
     .intro-copy strong {
       font-weight: 500;
-    }
-
-    /* Trade Gothic has no medium cut */
-    body[data-theme="gc"] .intro-copy strong {
-      font-weight: 700;
     }
 
     .facts span {
@@ -2940,7 +2858,7 @@
         s.push({ ...base, part: "Part E · Your Community Experience", title: `Your ${c} summer`, titleAr: `صيفك في ${cAr}`, sub: "Page 3 of 3", subAr: "صفحة 3 من 3", qs: ["E8", "E9"] });
       });
 
-      s.push({ kind: "q", theme: "gd", scope: "customer", part: "Your Feedback & Suggestions", title: "Before you go", titleAr: "قبل أن تغادر", qs: ["A7", "A8"] });
+      s.push({ kind: "q", theme: "gd", scope: "customer", part: "Your Feedback & Suggestions", title: "We'd Love to Hear More", titleAr: "يسعدنا أن نسمع المزيد منك", qs: ["A7", "A8"] });
 
       /* "Unit 1 of 2" counts only the units that Part covers (Part D skips units awaiting handover). */
       const byPart = {};
@@ -2979,20 +2897,6 @@
     const sectionAt = i => SECTIONS.find(s => i >= s.from && i <= s.to);
     const secName = s => s.community ? `${s.part} — ${s.community}` : s.part;
     const secNameAr = s => (PART_AR[s.part] || s.part) + (s.community ? ` — ${COMMUNITY_AR[s.community] || s.community}` : "");
-    /* Unit names, only for sections that cover some of the customer's units (Part C or D). */
-    function secWho(s) {
-      const u = [...s.units];
-      return u.length && u.length < UNITS.length ? u.map(i => unitLabel(UNITS[i])).join(" · ") : "";
-    }
-    /* Rough time to answer: about 7 seconds per answer (each matrix row counts). */
-    function secMinutes(s) {
-      let n = 0;
-      for (let i = s.from; i <= s.to; i++) {
-        for (const id of STEPS[i].qs) n += Q[id].type === "matrix" ? itemsOf(Q[id], STEPS[i].community).length : 1;
-      }
-      return Math.max(1, Math.round(n * 7 / 60));
-    }
-    const minsAr = n => n === 1 ? "دقيقة واحدة تقريبًا" : n === 2 ? "دقيقتان تقريبًا" : n <= 10 ? `${n} دقائق تقريبًا` : `${n} دقيقة تقريبًا`;
 
     /* ===================== RENDER HELPERS ===================== */
     const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -3562,6 +3466,10 @@
     /* Sticky context bar: once the hero scrolls away, the header keeps showing the section
        and, for per-unit and per-community steps, which unit or community is being answered. */
     const ctxBar = document.getElementById("ctxBar");
+    /* "Part A · Heading" → ["Part A", "Heading"]: the page title is the section heading (Abada, 1 Nov).
+       The closing section has no Part letter: its heading is the label and the step title is the page title. */
+    const partOf = p => p.includes(" · ") ? p.split(" · ") : ["", p];
+
     function setContext(step) {
       if (!step || step.kind !== "q") { ctxBar.innerHTML = ""; ctxBar.hidden = true; return; }
       let who = "";
@@ -3673,7 +3581,10 @@
         unitKey = L("Community", "المجتمع"); unitVal = commName(step.community); unitOf = L(step.sub, step.subAr);
       }
       hero.innerHTML = heroHtml({
-        eyebrow: L(step.part, PART_AR[step.part]), title: L(step.title, step.titleAr), unitKey, unitVal, unitOf, num: pad(i)
+        ...(step.part.includes(" · ")
+          ? { eyebrow: L(partOf(step.part)[0], partOf(PART_AR[step.part])[0]), title: L(partOf(step.part)[1], partOf(PART_AR[step.part])[1]) }
+          : { eyebrow: L(step.part, PART_AR[step.part]), title: L(step.title, step.titleAr) }),
+        unitKey, unitVal, unitOf, num: pad(i)
       });
       setContext(step);
 
@@ -3700,46 +3611,37 @@
       if (focusTop) { window.scrollTo({ top: 0 }); app.focus({ preventScroll: true }); }
     }
 
-    /* Shown after a section's answers have been sent: the sections so far, what comes next,
-       and the choice to continue or finish here. */
+    /* Shown after a section's answers have been sent: a saved confirmation and the choice
+       to continue with the next section or finish the survey here (Abada's design, 1 Nov). */
     function renderCheckpoint(sec) {
       const idx = SECTIONS.indexOf(sec);
-      const upNext = SECTIONS[idx + 1];
       document.body.dataset.dir = redraw === renderCheckpoint.last ? "" : "fwd";
       redraw = renderCheckpoint.last = () => renderCheckpoint(sec);
       document.body.classList.remove("is-intro");
       setContext(null);
-      updateProgress(100);
+      /* The header counts sections here, not pages, matching "Section 1 of 4 saved" */
+      const count = stepCount.querySelector("span");
+      if (count) {
+        count.textContent = `${idx + 1} / ${SECTIONS.length}`;
+        count.title = L(`Section ${idx + 1} of ${SECTIONS.length}`, `القسم ${idx + 1} من ${SECTIONS.length}`);
+      }
+      updateProgress(Math.round(sent.size / SECTIONS.length * 100));
       hero.innerHTML = heroHtml({
         eyebrow: L(`Section ${idx + 1} of ${SECTIONS.length} saved`, `تم حفظ القسم ${idx + 1} من ${SECTIONS.length}`),
-        title: L("Section complete", "اكتمل هذا القسم")
+        title: L("Thank You for Your Feedback", "شكرًا لك على ملاحظاتك")
       });
-      const rows = SECTIONS.map(s => {
-        const state = sent.has(s.id) ? "done" : s === upNext ? "next" : "todo";
-        const m = secMinutes(s);
-        const note = isAr()
-          ? (state === "done" ? "تم الحفظ" : state === "next" ? `التالي · ${minsAr(m)}` : minsAr(m))
-          : (state === "done" ? "Saved" : state === "next" ? `Up next · about ${m} min` : `About ${m} min`);
-        const who = secWho(s);
-        return `<li class="sec is-${state}"${state === "next" ? ' aria-current="step"' : ""}>
-        <span class="sec-dot" aria-hidden="true"></span>
-        <span class="sec-en"><b>${esc(L(secName(s), secNameAr(s)))}</b><small>${esc(note)}${who ? ` · <bdi>${esc(who)}</bdi>` : ""}</small></span>
-      </li>`;
-      }).join("");
       app.innerHTML = `<div class="panel checkpoint fade-in">
-    <div class="state-icon ok"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
-    <p class="lead" role="status">${L(`Thank you. Your answers for ${esc(secName(sec))} have reached us.`, `شكرًا لك. وصلتنا إجاباتك عن ${esc(secNameAr(sec))}.`)}</p>
-    <p>${L("You can finish here, or continue with the next section. Either way, what you have answered so far is already saved.",
-        "يمكنك الإنهاء هنا أو المتابعة إلى القسم التالي. في الحالتين، إجاباتك حتى الآن محفوظة لدينا.")}</p>
-    <ol class="sec-list">${rows}</ol>
+    <div class="state-icon saved"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+    <p class="confirm" role="status">${L("Your responses have been successfully saved.", "تم حفظ إجاباتك بنجاح.")}</p>
+    <p class="cp-note">${L("You can continue to the next section or finish the survey here.", "يمكنك المتابعة إلى القسم التالي أو إنهاء الاستبيان هنا.")}<br>${L("Your feedback will be retained either way.", "سيتم الاحتفاظ بملاحظاتك في كلتا الحالتين.")}</p>
     <div class="nav">
-      <button type="button" class="btn link" id="finishBtn">${btnLabel("Finish here", "إنهاء هنا")}</button>
-      <button type="button" class="btn" id="continueBtn">${btnLabel("Continue", "متابعة")}<span class="arrow" aria-hidden="true">→</span></button>
+      <button type="button" class="btn" id="continueBtn">${btnLabel("Continue to Next Section", "المتابعة إلى القسم التالي")}<span class="arrow" aria-hidden="true">→</span></button>
+      <button type="button" class="btn ghost" id="finishBtn">${btnLabel("Finish Survey", "إنهاء الاستبيان")}</button>
     </div>
   </div>`;
       document.getElementById("continueBtn").addEventListener("click", () => render(sec.to + 1));
       document.getElementById("finishBtn").addEventListener("click", finishEarly);
-      stagger(".checkpoint > p, .sec");
+      stagger(".checkpoint > p, .checkpoint .btn");
       window.scrollTo({ top: 0 });
       app.focus({ preventScroll: true });
       celebrate(sec.id, 28);
