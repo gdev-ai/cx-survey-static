@@ -1,6 +1,6 @@
 # CX Survey 2026 (static v2): response payload
 
-What `index-v2.html` sends for each response. Question set `2026-11-01` (Unified Design 1.1 + app feature ratings E7.1–E7.3).
+What `index-v2.html` sends for each response. Question set `2026-11-02` (Unified Design 1.1 + app feature ratings E7.1–E7.3; Seashell Walk moved to E1A.4).
 
 ## How it is sent
 
@@ -19,7 +19,7 @@ What `index-v2.html` sends for each response. Question set `2026-11-01` (Unified
 | Key | Type | Values / notes |
 |---|---|---|
 | `survey` | string | Always `"CX-2026"` |
-| `questionSet` | string | `"2026-11-01"`. Changes whenever questions change. |
+| `questionSet` | string | `"2026-11-02"`. Changes whenever questions change. |
 | `lang` | string | `"en"` or `"ar"`: the language the customer answered in |
 | `ref` | string | `CX26-XXXXXX` (6 uppercase letters or digits). Response id: one per customer per browser. |
 | `status` | string | `"partial"` or `"complete"` |
@@ -118,10 +118,11 @@ All E1–E5 rows (including E1A) are 1–5 or N/A. **The same key means differen
 | `E1.3` | Beach: Lifeguards | Beach: Lifeguards |
 | `E1.4` | Beach: Beach staff service | Beach: Beach staff service |
 | `E1.5` | Beach: Beachfront commercial area | Beach: Beachfront commercial area |
-| `E1.6` | — (not asked; moved to `E1A.1` on 1 Nov) | Beach: Seashell Walk |
+| `E1.6` | — (not asked; moved to `E1A.1` on 1 Nov) | — (not asked; moved to `E1A.4` on 2 Nov) |
 | `E1A.1` | Commercial & recreational: Overall experience at Main Spine | Commercial & recreational: Internal retail & dining area |
 | `E1A.2` | Commercial & recreational: Overall experience at Playa Strip | Commercial & recreational: Sports courts & facilities |
 | `E1A.3` | — (not asked) | Commercial & recreational: Children's play areas |
+| `E1A.4` | — (not asked) | Commercial & recreational: Seashell Walk |
 | `E2.1` | Lagoons cleanliness and water quality | Pool cleanliness and water quality |
 | `E2.2` | Swimmable lagoon cleanliness and water quality | Pool lifeguards |
 | `E2.3` | Fountains cleanliness | Swimmable lagoon cleanliness and water quality |
@@ -152,7 +153,7 @@ All E1–E5 rows (including E1A) are 1–5 or N/A. **The same key means differen
 ```json
 {
   "survey": "CX-2026",
-  "questionSet": "2026-11-01",
+  "questionSet": "2026-11-02",
   "lang": "ar",
   "ref": "CX26-OG7VBR",
   "status": "complete",
@@ -200,7 +201,7 @@ The payload is nested, so it fits best in three data extensions joined on `Ref`.
    - Answer fields: `C1_1`, `C1_2`, `C2`, `C3`, `D0` to `D9`, `D8_detail`.
 3. **`CX_Survey_2026_Communities`**: one row per `ref` and `community`, with that pair as the primary key.
    - Response fields: `Ref`, `CustomerId`, `Community`.
-   - Answer fields: `E1_1` to `E1_6`, `E1A_1` to `E1A_3`, `E2_1` to `E2_4`, `E3_1` to `E3_5`, `E4_1` to `E4_4`, `E5_1` to `E5_3`, `E6`, `E7`, `E7_1` to `E7_3`, `E8`, `E9`, `E9_other`.
+   - Answer fields: `E1_1` to `E1_5`, `E1A_1` to `E1A_4`, `E2_1` to `E2_4`, `E3_1` to `E3_5`, `E4_1` to `E4_4`, `E5_1` to `E5_3`, `E6`, `E7`, `E7_1` to `E7_3`, `E8`, `E9`, `E9_other`.
 
 **Follow-up triggers** (from the design doc). Each one applies only if `A8 = "Yes"`:
 

@@ -413,20 +413,6 @@
     }
 
     /* ---------- Questions ---------- */
-    .handoff {
-      margin: 0 0 22px;
-      padding: 14px 18px;
-      background: var(--accent-tint);
-      border-radius: var(--card-radius);
-      font-size: 15px;
-    }
-
-    .section-note {
-      margin: 0 0 22px;
-      color: var(--muted);
-      font-size: 15px;
-    }
-
     .q {
       background: var(--surface);
       border: 1px solid var(--line);
@@ -764,11 +750,6 @@
       align-items: center;
       gap: 0 6px;
       padding: 0 16px;
-    }
-
-    .legend-ar bdi {
-      unicode-bidi: isolate;
-      direction: rtl;
     }
 
     .m-row {
@@ -2057,10 +2038,6 @@
       margin-top: 4px;
     }
 
-    .section-note .ar {
-      margin-top: 4px;
-    }
-
     /* Sticky context bar (inside the sticky header). Hidden until the hero has scrolled away. */
     /* Overlays the page just below the sticky header (absolute, so it never changes the header's
        height: a height change would move the hero back into view and make the bar flicker). */
@@ -2510,7 +2487,7 @@
        Updated to the 28 Oct 2026 design (Unified Design 1.1): E1 and E2 list different items for
        each community (itemsBy); every other question is shared. Part B is asked once per customer. */
     const SAT = { en: ["Very dissatisfied", "Very satisfied"], ar: ["غير راضٍ على الإطلاق", "راضٍ جدًا"] };
-    const NA_LABEL = { en: "Not applicable / didn't use", ar: "لا ينطبق / لم أستخدمها" };
+    const NA_LABEL = { en: "Not applicable", ar: "لا ينطبق" };
     const BEACH_SHARED = [
       { id: "E1.1", en: "Cleanliness", ar: "النظافة" },
       { id: "E1.2", en: "Furniture and facilities", ar: "الأثاث والمرافق" },
@@ -2651,13 +2628,13 @@
             ...BEACH_SHARED
           ],
           Seashell: [
-            ...BEACH_SHARED,
-            { id: "E1.6", en: "Seashell Walk", ar: "ممشى سيشيل" }
+            ...BEACH_SHARED
           ]
         }
       },
       /* Commercial & recreational areas (1 Nov 2026), split out of the beach question in both communities:
-         Seashell replaces the old "Internal commercial area" item; Playa takes over Main Spine and Playa Strip (were E1.6, E1.7). */
+         Seashell replaces the old "Internal commercial area" item; Playa takes over Main Spine and Playa Strip (were E1.6, E1.7).
+         Seashell Walk moved here from the beach question on 2 Nov (was E1.6). */
       E1A: {
         type: "matrix", na: true, en: "How satisfied are you with the commercial and recreational areas?",
         ar: "ما مدى رضاك عن كل مما يلي في المناطق التجارية والترفيهية؟",
@@ -2669,7 +2646,8 @@
           Seashell: [
             { id: "E1A.1", en: "Internal Retail & Dining Area", ar: "منطقة المحلات التجارية والمطاعم الداخلية" },
             { id: "E1A.2", en: "Sports Courts & Facilities", ar: "الملاعب والمرافق الرياضية" },
-            { id: "E1A.3", en: "Children's Play Areas", ar: "مناطق ألعاب الأطفال" }
+            { id: "E1A.3", en: "Children's Play Areas", ar: "مناطق ألعاب الأطفال" },
+            { id: "E1A.4", en: "Seashell Walk", ar: "ممشى سيشيل" }
           ]
         }
       },
@@ -2766,11 +2744,10 @@
     const UI_AR = {
       "Select all that apply.": "اختر كل ما ينطبق.",
       "Please describe it briefly.": "يرجى وصفه باختصار.",
-      "Please specify.": "يرجى التحديد.",
-      "Before handover, at handover and after it, in that order.": "قبل الاستلام، ثم عند الاستلام، ثم بعده، بهذا الترتيب."
+      "Please specify.": "يرجى التحديد."
     };
     /* Community names inside Arabic text are written in Arabic. */
-    const COMMUNITY_AR = { Playa: "بلايا", Seashell: "سي شل" };
+    const COMMUNITY_AR = { Playa: "بلايا", Seashell: "سيشيل" };
     const STAGE_AR = { pre: "في انتظار الاستلام", handed: "تم الاستلام" };
     const PART_AR = {
       "Part A · Your Overall Experience with G Developments": "الجزء أ · تجربتك العامة مع G Developments",
@@ -2874,8 +2851,7 @@
         if (u.stage === "handed") {
           s.push({
             kind: "q", theme: "gd", scope: "unit", unit: i, part: "Part D · Your Unit Handover Experience",
-            title: "Looking back at your handover", titleAr: "نظرة على استلام وحدتك", qs: ["D0", "D1", "D2", "D3", "D4", "D5", "D6", "D7", "D8", "D9"],
-            note: "Before handover, at handover and after it, in that order."
+            title: "Looking back at your handover", titleAr: "نظرة على استلام وحدتك", qs: ["D0", "D1", "D2", "D3", "D4", "D5", "D6", "D7", "D8", "D9"]
           });
         }
       });
@@ -2888,7 +2864,7 @@
         answers.communities[c] = {};
         const base = { kind: "q", theme: "gc", scope: "community", community: c, commIndex: ci, commTotal: comms.length };
         const cAr = COMMUNITY_AR[c] || c;
-        s.push({ ...base, part: "Part E · Your Community Experience", title: `Life in ${c}`, titleAr: `الحياة في ${cAr}`, sub: "Page 1 of 4", subAr: "صفحة 1 من 4", qs: ["E1", "E1A", "E2", "E3", "E4"], handoff: ci === 0 });
+        s.push({ ...base, part: "Part E · Your Community Experience", title: `Life in ${c}`, titleAr: `الحياة في ${cAr}`, sub: "Page 1 of 4", subAr: "صفحة 1 من 4", qs: ["E1", "E1A", "E2", "E3", "E4"] });
         s.push({ ...base, part: "Part E · Your Community Experience", title: `Service in ${c}`, titleAr: `الخدمة في ${cAr}`, sub: "Page 2 of 4", subAr: "صفحة 2 من 4", qs: ["E5", "E6"] });
         s.push({ ...base, part: "Part E · Your Community Experience", title: "OneCommunity Mobile Application Experience", titleAr: "تجربتك مع تطبيق OneCommunity", sub: "Page 3 of 4", subAr: "صفحة 3 من 4", qs: ["E7M"] });
         s.push({ ...base, part: "Part E · Your Community Experience", title: `Your ${c} summer`, titleAr: `صيفك في ${cAr}`, sub: "Page 4 of 4", subAr: "صفحة 4 من 4", qs: ["E8", "E9"] });
@@ -2991,15 +2967,7 @@
       return answers.customer;
     }
 
-    function labelBlock(id, q, c, tag = "div") {
-      return `<${tag} class="q-label"><span class="q-num">${esc(id)}</span>${esc(sub(q.en, c))}${q.optional ? '<span class="opt-tag">Optional</span>' : ""}
-    <span class="ar" lang="ar">${esc(sub(q.ar, c))}</span></${tag}>${q.hint ? `<div class="q-hint">${esc(q.hint)}</div>` : ""}`;
-    }
-
     /* Each "n = label" pair is isolated so the bidi algorithm can't swap numbers and labels. */
-    function satLegendAr() {
-      return `<span class="ar legend-ar" lang="ar" dir="rtl"><bdi>1★ = ${esc(SAT.ar[0])}</bdi> · <bdi>5★ = ${esc(SAT.ar[1])}</bdi></span>`;
-    }
     const satLegend = () => `<bdi>1 = ${esc(L(SAT.en[0], SAT.ar[0]))}</bdi> · <bdi>5 = ${esc(L(SAT.en[1], SAT.ar[1]))}</bdi>`;
 
     function anchorsFor(q) {
@@ -3022,18 +2990,6 @@
         h += `<label${stars ? ` title="${of}"` : ""}><input type="radio" name="${name}" value="${n}" ${String(val) === String(n) ? "checked" : ""}><span class="box">${face}</span></label>`;
       }
       return h + "</div>";
-    }
-
-    function matrixBody(q, a, c) {
-      let body = `<div class="legend-line"><span>1★ = ${esc(SAT.en[0])} · 5★ = ${esc(SAT.en[1])}</span>${satLegendAr()}</div>`;
-      for (const it of itemsOf(q, c)) {
-        body += `<div class="m-row" data-item="${esc(it.id)}" role="radiogroup" aria-label="${esc(sub(it.en, c))}">
-        <div class="m-label"><span><span class="q-num">${esc(it.id)}</span>${esc(sub(it.en, c))}</span><span class="ar" lang="ar">${esc(sub(it.ar, c))}</span></div>
-        <div class="m-controls">${scaleHtml(it.id, 1, 5, a[it.id])}
-          ${q.na ? `<label class="na"><input type="radio" name="${it.id}" value="N/A" ${a[it.id] === "N/A" ? "checked" : ""}><span class="box">N/A</span></label>` : ""}
-        </div></div>`;
-      }
-      return body;
     }
 
     function renderQuestion(id, step) {
@@ -3163,53 +3119,6 @@
       const c = getComputedStyle(document.body).getPropertyValue("--bar-color").trim();
       if (themeMeta && c) themeMeta.content = c;
     }
-    function setProgress(i) {
-      const qSteps = STEPS.length - 1;
-      if (i === 0) { stepCount.textContent = ""; bar.style.width = "0%"; return; }
-      stepCount.textContent = `Step ${i} of ${qSteps}`;
-      bar.style.width = `${Math.round((i - 1) / qSteps * 100)}%`;
-    }
-
-    function render(i, focusTop = true) {
-      cur = i;
-      const step = STEPS[i];
-      setTheme(step.theme);
-      setProgress(i);
-      document.body.classList.remove("co-brand", "closing");
-      if (step.kind === "intro") return renderIntro();
-
-      let unitTag = "";
-      if (step.scope === "unit") {
-        const u = UNITS[step.unit];
-        unitTag = `<div class="unit-tag"><span>Unit</span><b>${esc(u.label)}</b>${UNITS.length > 1 ? `<span class="unit-of">${step.unit + 1} of ${UNITS.length}</span>` : ""}</div>`;
-      } else if (step.scope === "community") {
-        unitTag = `<div class="unit-tag"><span>Community</span><b>${esc(step.community)}</b><span class="unit-of">${esc(step.sub)}</span></div>`;
-      }
-
-      const last = i === STEPS.length - 1;
-      app.innerHTML = `<div class="fade-in">
-    ${step.handoff ? `<div class="handoff">The next questions are about living in your community, which is managed by <b>G Communities</b>.</div>` : ""}
-    <div class="section-head">
-      <p class="eyebrow">${esc(step.part)}</p>
-      <h1>${esc(step.title)}</h1>
-      ${unitTag}
-      ${step.note ? `<p class="section-note">${esc(step.note)}</p>` : ""}
-    </div>
-    <form id="stepForm" novalidate>
-      ${step.qs.map(id => renderQuestion(id, step)).join("")}
-      <div class="nav">
-        <button type="button" class="btn ghost" id="backBtn">Back</button>
-        <button type="submit" class="btn" id="nextBtn">${last ? "Submit" : "Next"}</button>
-      </div>
-    </form></div>`;
-
-      const form = document.getElementById("stepForm");
-      form.addEventListener("change", e => onChange(step, e));
-      form.addEventListener("submit", e => { e.preventDefault(); next(); });
-      document.getElementById("backBtn").addEventListener("click", () => { readStep(step); render(cur - 1); });
-      if (focusTop) { window.scrollTo({ top: 0 }); app.focus({ preventScroll: true }); }
-    }
-
     function onChange(step, e) {
       readStep(step);
       const a = bucket(step);
@@ -3243,62 +3152,12 @@
       render(cur + 1);
     }
 
-    function renderIntro() {
-      const handed = UNITS.some(u => u.stage === "handed");
-      const mins = handed ? "about 8 minutes" : "about 4 minutes";
-      app.innerHTML = `<div class="panel fade-in">
-    <p class="eyebrow">Customer Experience Survey 2026</p>
-    <h1>${CUSTOMER.name ? `Dear ${esc(CUSTOMER.name)},` : "Dear customer,"}</h1>
-    <p>Thank you for being part of G Developments. We would like to hear how we are doing, from your account and your unit's progress to life in your community.</p>
-    <div class="facts">
-      <div><b>${mins}</b>to complete</div>
-      <div><b>${UNITS.length} ${UNITS.length === 1 ? "unit" : "units"}</b>covered in this survey</div>
-    </div>
-    <ul class="unit-list">${UNITS.map(u => `<li><span>${esc(u.label)}</span><span class="stage">${STAGE_LABEL[u.stage]}</span></li>`).join("")}</ul>
-    <p class="muted">Your answers are linked to your unit${UNITS.length > 1 ? "s" : ""} so that we can follow up on anything that needs attention.</p>
-    <div class="nav" style="justify-content:flex-end"><button class="btn" id="startBtn" type="button">Start survey</button></div>
-  </div>`;
-      document.getElementById("startBtn").addEventListener("click", () => render(1));
-    }
-
-    function renderState(kind) {
-      setTheme("gd");
-      document.body.classList.add("co-brand");
-      stepCount.textContent = "";
-      bar.style.width = kind === "success" ? "100%" : bar.style.width;
-      const icons = {
-        ok: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>`,
-        err: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 7v6M12 16.5v.5"/><circle cx="12" cy="12" r="9"/></svg>`
-      };
-      const views = {
-        success: `<div class="state-icon">${icons.ok}</div>
-      <h1>Thank you</h1>
-      <p>Your answers have been received. They go directly to the teams responsible for each part of your experience.</p>
-      ${answers.customer.A8 === "Yes" ? `<p class="muted">Since you agreed to be contacted, a member of our team may reach out about your answers.</p>` : ""}
-      <p class="muted">You can now close this page.</p>`,
-        error: `<div class="state-icon err">${icons.err}</div>
-      <h1>We couldn't send your answers</h1>
-      <p>Something went wrong on our side. Your answers are still on this page, so please try again.</p>
-      <div class="nav" style="justify-content:flex-start"><button class="btn" id="retryBtn" type="button">Try again</button>
-      <button class="btn ghost" id="reviewBtn" type="button">Review answers</button></div>`,
-        invalid: `<div class="state-icon err">${icons.err}</div>
-      <h1>This survey link isn't valid</h1>
-      <p>The link may be incomplete or out of date. Please open the survey from the original email or WhatsApp message.</p>`
-      };
-      app.innerHTML = `<div class="panel fade-in" role="status">${views[kind]}</div>`;
-      window.scrollTo({ top: 0 });
-      if (kind === "error") {
-        document.getElementById("retryBtn").addEventListener("click", submit);
-        document.getElementById("reviewBtn").addEventListener("click", () => render(STEPS.length - 1));
-      }
-    }
-
     /* ===================== SUBMIT ===================== */
     function payload(status = "complete", early = false) {
       if (!REF) REF = "CX26-" + Math.random().toString(36).slice(2, 8).toUpperCase();
       return {
         survey: "CX-2026",
-        questionSet: "2026-11-01",  // version of the question bank (Unified Design 1.1)
+        questionSet: "2026-11-02",  // version of the question bank (Unified Design 1.1)
         lang: LANG,                // language the customer answered in: "en" or "ar"
         ref: REF,
         status,                    // "partial" (end of a section) or "complete" (the customer finished)
@@ -3627,7 +3486,6 @@
       const last = i === STEPS.length - 1;
       const secEnd = !last && sectionAt(i).to === i;
       app.innerHTML = `<div class="fade-in">
-    ${step.note ? `<p class="section-note">${bi(step.note, step.noteAr || UI_AR[step.note])}</p>` : ""}
     <form id="stepForm" novalidate>
       ${step.qs.map(id => renderQuestion(id, step)).join("")}
       <div class="nav">
@@ -3643,7 +3501,7 @@
       form.addEventListener("change", () => updateProgress());
       form.addEventListener("submit", e => { e.preventDefault(); next(); });
       document.getElementById("backBtn").addEventListener("click", () => { readStep(step); render(cur - 1); });
-      stagger(".section-note, .q");
+      stagger(".q");
       if (focusTop) { window.scrollTo({ top: 0 }); app.focus({ preventScroll: true }); }
     }
 
